@@ -1,6 +1,0 @@
-/node_modules
-.env
-Dockerfile
-Jenkinsfile
-tsconfig.json
-*.js
