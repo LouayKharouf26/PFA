@@ -3,3 +3,4 @@
 Dockerfile
 Jenkinsfile
 tsconfig.json
+*.js
