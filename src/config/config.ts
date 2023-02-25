@@ -9,8 +9,7 @@ let database_url =
 mongoose.set("strictQuery", true);
 mongoose
   .connect(database_url)
-  .then((result) => {
-    console.log(process.env.PORT);
+  .then(() => {
     console.log(`Database ${database_url} listening on ${process.env.PORT}`);
   })
   .catch((err) => {

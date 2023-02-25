@@ -34,21 +34,6 @@ UserSchema.pre("save", async function (next) {
   next();
 });
 
-UserSchema.statics.login = async function (username, password) {
-  const user = await this.findOne({ username });
-  if (user) {
-    var auth;
-    if (md5(password) === user.password) auth = true;
-    else {
-      console.log("wrong password");
-      auth = false;
-    }
-
-    if (auth) {
-      return user;
-    }
-  }
-};
-
 const User = mongoose.model("user", UserSchema);
+
 export default User;

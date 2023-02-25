@@ -10,7 +10,4 @@ app.use(cors({
     origin: ["frontend_ip:port"],
 }));
 app.use(router);
-app.listen(process.env.PORT, function () {
-    console.log("hello from backend");
-    console.log(process.env.PORT);
-});
+app.listen(process.env.PORT, function () { });
