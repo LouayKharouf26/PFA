@@ -1,14 +1,13 @@
 import * as express from "express";
 import * as cors from "cors";
-import * as dotenv from "dotenv";
-
-const router = require("./router/router");
+import helmet from "helmet";
 require("dotenv").config();
 
+const router = require("./router/router");
 const app = express();
 
+app.use(helmet());
 app.use(express.json());
-
 app.use(
   cors({
     origin: ["frontend_ip:port"],
