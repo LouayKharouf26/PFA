@@ -1,12 +1,13 @@
 import * as mongoose from "mongoose";
 require("dotenv").config();
 
-let database_url =
+let database_url = `${
   process.env.DB_URI_DEV ||
   process.env.DB_URI_COMPOSE ||
-  process.env.DB_URI_PROD;
-
+  process.env.DB_URI_PROD
+}`;
 mongoose.set("strictQuery", true);
+console.log(database_url);
 mongoose
   .connect(database_url)
   .then(() => {

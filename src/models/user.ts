@@ -4,6 +4,7 @@ import * as md5 from "md5";
 const UserSchema = new mongoose.Schema({
   username: {
     type: String,
+    unique: true,
     required: [true, "please enter a username"],
   },
   firstname: {

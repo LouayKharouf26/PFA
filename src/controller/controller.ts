@@ -74,3 +74,17 @@ module.exports.loginUser = async (
     res.send("Wrong username please retype it again");
   }
 };
+
+module.exports.getUserByUsername = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  const username = req.body.username;
+  const user = await User.findOne({ username });
+  if (user) {
+    //res.send(user)
+    res.send(JSON.stringify(user));
+  } else {
+    res.send("User not found, please recheck the username");
+  }
+};
