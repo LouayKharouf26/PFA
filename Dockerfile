@@ -3,6 +3,6 @@ WORKDIR /app
 COPY package.json /app
 RUN npm install
 COPY . /app
-RUN tsc -w 
+RUN tsc -w
 CMD ["nodemon","app.js"]
 EXPOSE 4000
