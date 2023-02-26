@@ -1,15 +1,18 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var express = require("express");
-var cors = require("cors");
-var helmet_1 = require("helmet");
+const express = require("express");
+const cors = require("cors");
+const helmet = require("helmet");
 require("dotenv").config();
-var router = require("./router/router");
-var app = express();
-app.use((0, helmet_1.default)());
+
+const router = require("./router/router");
+const app = express();
+
+app.use(helmet());
 app.use(express.json());
-app.use(cors({
+app.use(
+  cors({
     origin: ["frontend_ip:port"],
-}));
+  })
+);
 app.use(router);
-app.listen(process.env.PORT, function () { });
+
+app.listen(process.env.PORT, () => {});
