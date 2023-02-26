@@ -56,7 +56,7 @@ module.exports.loginUser = async (req, res) => {
     }
     if (auth) {
       const token = createToken(user._id);
-      res.cookie("jwt", token, { maxAge: maxAge * 1000 });
+      res.cookie("jwt", token, { maxAge: maxAge * 1000, httpOnly: true });
       console.log(JSON.stringify({ id: user._id.valueOf() }));
       res
         .status(200)
