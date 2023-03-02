@@ -1,0 +1,4 @@
+/terraform template/.terraform
+/terraform template/.terraform.lock.hcl
+/api/node_modules
+/api/.env
