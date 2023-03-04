@@ -15,24 +15,20 @@ pipeline{
             steps {                
                 script {
                     echo "======== executing ========"
-                    dir("terraform template"){
                         sh "pwd"
                         if (env.ENVIR == 'linux') {
-                            dir("linux") {
-                                sh "pwd"
-                                sh "ls"
-                            }
-                            
+                            sh "cd /terraform/template/linux/"
+                            sh "pwd"
+                            sh "ls"
                         } else if (env.ENVIR == 'windows'){
-                            dir("windows") {
-                                 sh "pwd"
-                                 sh "ls"
-                            }  
+                            sh " cd /terraform/template/windows/"
+                            sh "pwd"
+                            sh "ls"
+                        }
                         } else {
-                            dir("windows_server") {
-                                sh "pwd"
-                                sh "ls"
-                            }
+                            sh " cd /terraform/template/windows_server/"
+                            sh "pwd"
+                            sh "ls"                       
                         }
                     }            
                 }
