@@ -16,6 +16,7 @@ pipeline{
                 script {
                     echo "======== executing ========"
                         sh "pwd"
+                        sh "ls"
                         if (env.ENVIR == 'linux') {
                             sh "cd /terraform-template/linux/"
                             sh "pwd"
