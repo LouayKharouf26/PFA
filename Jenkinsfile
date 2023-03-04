@@ -11,14 +11,18 @@ pipeline{
                     dir("terraform template"){
                         sh "pwd"
                         if (env.ENVIR == 'linux') {
-                            dir("linux")
-                            sh "pwd"
+                            dir("linux") {
+                                sh "pwd"
+                            }
+                            
                         } else if (env.ENVIR == 'windows'){
-                            dir("windows")
-                            sh "pwd"
+                            dir("windows") {
+                                 sh "pwd"
+                            }  
                         } else {
-                            dir("windows_server")
-                            sh "pwd"
+                            dir("windows_server") {
+                                sh "pwd"
+                            }
                         }
                     }            
                 }
