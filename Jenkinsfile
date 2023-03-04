@@ -1,17 +1,35 @@
+#! /usr/bin/env groovy
+
 pipeline{
     agent any
     stages{
-        stage("A"){
+        stage("Setting up infra"){
             steps{
-                echo "========executing A========"
+                environment{
+                    ENVIR="linux"
+                }
+                script{
+                    echo "======== executing ========"
+                    dir("terraform template"){
+                        if (env.ENVIR == 'linux') {
+                            dir("linux")
+                            sh "pwd"
+                        } else if (env.ENVIR == 'windows'){
+                            dir("windows")
+                            sh "pwd"
+                        } else {
+                            dir("windows_server")
+                            sh "pwd"
+                        }
+                    }            
+                }
             }
             post{
-
                 success{
-                    echo "========A executed successfully========"
+                    echo "======== Setting up infra executed successfully ========"
                 }
                 failure{
-                    echo "========A execution failed========"
+                    echo "======== Setting up infra execution failed ========"
                 }
             }
         }
