@@ -6,5 +6,5 @@ router.get("/", controller.getDefault);
 router.post("/signup", controller.createUser);
 router.post("/login", controller.loginUser);
 router.get("/user", controller.getUserByUsername);
-
+router.post("/triggerPipeline", controller.triggerPipeline);
 module.exports = router;

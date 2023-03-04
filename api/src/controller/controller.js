@@ -3,6 +3,7 @@ require("../config/config");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const md5 = require("md5");
+const fs = require("fs");
 
 module.exports.getDefault = (req, res) => {
   console.log("hello for get request");
@@ -78,3 +79,23 @@ module.exports.getUserByUsername = async (req, res) => {
     res.send("User not found, please recheck the username");
   }
 };
+
+module.exports.triggerPipeline = async (req, res) => {
+  const params = req.body;
+  var name =
+    __dirname + "\\..\\..\\..\\terraform template\\terraform.tfvars.json";
+  var m = JSON.parse(fs.readFileSync(name).toString());
+  Object.entries(params).map((p) => {
+    m[p[0]] = p[1];
+  });
+  fs.writeFileSync(name, JSON.stringify(m));
+  res.send(m);
+};
+// {
+//   "subscription_id": "cc7b3e92-7412-47e3-abe0-b6f5315d0d09",
+//   "resource_group_name": "rg-01",
+//   "virtual_network_name": "vnet-01",
+//   "subnet_name": "subnet-01",
+//   "virtual_machine_name": "linux-01",
+//   "virtual_machine_size": "Standard_B2s"
+// }
