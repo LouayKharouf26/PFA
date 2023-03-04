@@ -31,7 +31,6 @@ pipeline{
                         }
                     }            
                 }
-            }
             post{
                 success{
                     echo "======== Setting up infra executed successfully ========"
@@ -40,7 +39,7 @@ pipeline{
                     echo "======== Setting up infra execution failed ========"
                 }
             }
-        }
+        }        
     }
     post{
         success{
