@@ -18,17 +18,20 @@ pipeline{
                         sh "pwd"
                         sh "ls"
                         if (env.ENVIR == 'linux') {
-                            sh "cd /terraform-template/linux/"
-                            sh "pwd"
-                            sh "ls"
+                            dir ("terraform-template/linux") {
+                                sh "pwd"
+                                sh "ls"
+                            }
                         } else if (env.ENVIR == 'windows'){
-                            sh " cd /terraform-template/windows/"
-                            sh "pwd"
-                            sh "ls"
+                            dir ("terraform-template/windows") {
+                                sh "pwd"
+                                sh "ls"
+                            }
                         } else {
-                            sh " cd /terraform-template/windows_server/"
-                            sh "pwd"
-                            sh "ls"                       
+                            dir ("terraform-template/windows_server") {
+                                sh "pwd"
+                                sh "ls"
+                            }                    
                         }
                     }            
                 }
