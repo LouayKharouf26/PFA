@@ -24,7 +24,6 @@ pipeline{
                             sh " cd /terraform/template/windows/"
                             sh "pwd"
                             sh "ls"
-                        }
                         } else {
                             sh " cd /terraform/template/windows_server/"
                             sh "pwd"
