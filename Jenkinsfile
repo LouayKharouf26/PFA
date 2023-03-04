@@ -4,10 +4,10 @@ pipeline{
     agent any
     stages{
         stage("Setting up infra"){
-            steps{
-                environment{
+            environment{
                     ENVIR="linux"
                 }
+            steps{                
                 script{
                     echo "======== executing ========"
                     dir("terraform template"){
