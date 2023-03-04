@@ -83,7 +83,7 @@ module.exports.getUserByUsername = async (req, res) => {
 module.exports.triggerPipeline = async (req, res) => {
   const params = req.body;
   var name =
-    __dirname + "\\..\\..\\..\\terraform template\\terraform.tfvars.json";
+    __dirname + "\\..\\..\\..\\terraform-template\\terraform.tfvars.json";
   var m = JSON.parse(fs.readFileSync(name).toString());
   Object.entries(params).map((p) => {
     m[p[0]] = p[1];
