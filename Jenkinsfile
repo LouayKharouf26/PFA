@@ -2,16 +2,18 @@ pipeline{
     agent any
     stages{
         stage("getting code") {
-            git url: 'https://github.com/Louaykharouf26/PFA', branch: 'malek',
-            credentialsId: 'jenkins-github-creds'
-            sh "ls -ltr"
+            steps {
+                git url: 'https://github.com/Louaykharouf26/PFA', branch: 'malek',
+                credentialsId: 'jenkins-github-creds'
+                sh "ls -ltr"
+            }
         }
-        stage("Setting up infra"){
-            environment{
+        stage("Setting up infra") {
+            environment {
                     ENVIR="linux"
                 }
-            steps{                
-                script{
+            steps {                
+                script {
                     echo "======== executing ========"
                     dir("terraform template"){
                         sh "pwd"
