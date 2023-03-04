@@ -22,41 +22,50 @@ resource "azurerm_network_security_group" "network-security-group" {
   name                = "default-security-group"
   location            = azurerm_resource_group.resource-group.location
   resource_group_name = azurerm_resource_group.resource-group.name
-  security_rule = [{
-    name                       = "ssh-in"
-    priority                   = 100
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "22"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-    },
-    {
-      name                       = "ping"
-      priority                   = 100
-      direction                  = "Inbound"
-      access                     = "Allow"
-      protocol                   = "Icmp"
-      source_port_range          = "*"
-      destination_port_range     = "*"
-      source_address_prefix      = "*"
-      destination_address_prefix = "*"
-    },
-
-    {
-      name                       = "connexion"
-      priority                   = 100
-      direction                  = "Outbound"
-      access                     = "Allow"
-      protocol                   = "Tcp"
-      source_port_range          = "*"
-      destination_port_range     = "22"
-      source_address_prefix      = "*"
-      destination_address_prefix = "*"
-  }]
 }
+
+resource "azurerm_network_security_rule" "nsr-1" {
+  name                        = "ssh-in"
+  priority                    = 100
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "22"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
+  resource_group_name         = azurerm_resource_group.resource-group.name
+  network_security_group_name = azurerm_network_security_group.network-security-group.name
+}
+
+resource "azurerm_network_security_rule" "nsr-2" {
+  name                        = "ping"
+  priority                    = 200
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Icmp"
+  source_port_range           = "*"
+  destination_port_range      = "*"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
+  resource_group_name         = azurerm_resource_group.resource-group.name
+  network_security_group_name = azurerm_network_security_group.network-security-group.name
+}
+
+resource "azurerm_network_security_rule" "nsr-3" {
+  name                        = "connexion"
+  priority                    = 300
+  direction                   = "Outbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "22"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
+  resource_group_name         = azurerm_resource_group.resource-group.name
+  network_security_group_name = azurerm_network_security_group.network-security-group.name
+}
+
 
 resource "azurerm_virtual_network" "virtual-network" {
   name                = var.virtual_network_name
@@ -90,11 +99,14 @@ resource "azurerm_network_interface" "network-interface" {
 
 
 resource "azurerm_linux_virtual_machine" "linux-virtual-machine" {
-  name                = var.virtual_machine_name
-  resource_group_name = azurerm_resource_group.resource-group.name
-  location            = azurerm_resource_group.resource-group.location
-  size                = var.virtual_machine_size
-  admin_username      = "admin"
+  name                            = var.virtual_machine_name
+  resource_group_name             = azurerm_resource_group.resource-group.name
+  location                        = azurerm_resource_group.resource-group.location
+  size                            = var.virtual_machine_size #Standard_B2s Standard_F2s Standard_D2s
+  computer_name                   = var.virtual_machine_name
+  admin_username                  = "mk"
+  admin_password                  = "PassStudent123"
+  disable_password_authentication = false
   network_interface_ids = [
     azurerm_network_interface.network-interface.id,
   ]
@@ -102,16 +114,18 @@ resource "azurerm_linux_virtual_machine" "linux-virtual-machine" {
   #     username   = "adminuser"
   #     public_key = file("~/.ssh/id_rsa.pub")
   #   }
+
   os_disk {
+    name                 = "myOsDisk"
     caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-  }
-  source_image_reference {
-    # user defined image
-    # publisher = "Canonical"
-    # offer     = "UbuntuServer"
-    # sku       = "16.04-LTS"
-    # version   = "latest"
+    storage_account_type = "Standard_LRS" #Standard_LRS, StandardSSD_LRS, Premium_LRS, StandardSSD_ZRS Premium_ZRS
   }
 
+  source_image_reference {
+    # user defined image
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "18.04-LTS" # or "16.04 20.04 22.04LTS" 
+    version   = "latest"
+  }
 }
