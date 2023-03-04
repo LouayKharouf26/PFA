@@ -1,5 +1,3 @@
-#! /usr/bin/env groovy
-
 pipeline{
     agent any
     stages{
@@ -11,6 +9,7 @@ pipeline{
                 script{
                     echo "======== executing ========"
                     dir("terraform template"){
+                        sh "pwd"
                         if (env.ENVIR == 'linux') {
                             dir("linux")
                             sh "pwd"
