@@ -21,16 +21,25 @@ pipeline{
                             dir ("terraform-template/linux") {
                                 sh "pwd"
                                 sh "ls"
+                                echo "terraform init"
+                                //terraform plan --var-file=..\terraform.tfvars.json
+                                //terraform apply --auto-approve --var-file=..\terraform.tfvars.json
                             }
                         } else if (env.ENVIR == 'windows'){
                             dir ("terraform-template/windows") {
                                 sh "pwd"
                                 sh "ls"
+                                echo "terraform init"
+                                //terraform plan --var-file=..\terraform.tfvars.json
+                                //terraform apply --auto-approve --var-file=..\terraform.tfvars.json
                             }
                         } else {
                             dir ("terraform-template/windows_server") {
                                 sh "pwd"
                                 sh "ls"
+                                echo "terraform init"
+                                //terraform plan --var-file=..\terraform.tfvars.json
+                                //terraform apply --auto-approve --var-file=..\terraform.tfvars.json
                             }                    
                         }
                     }            

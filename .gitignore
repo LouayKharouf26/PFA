@@ -1,7 +1,7 @@
-/terraform-template/.terraform
-/terraform-template/.terraform.lock.hcl
+*.terraform
+*.terraform.lock.hcl
 /api/node_modules
 /api/.env
-/terraform-template/.terraform.tfstate.lock.info
-/terraform-template/terraform.tfstate.backup
-/terraform-template/terraform.tfstate
+*.terraform.tfstate.lock.info
+*terraform.tfstate.backup
+*terraform.tfstate
