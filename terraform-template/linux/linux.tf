@@ -123,9 +123,9 @@ resource "azurerm_linux_virtual_machine" "linux-virtual-machine" {
 
   source_image_reference {
     # user defined image
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS" # or "16.04 20.04 22.04LTS" 
+    publisher = "Canonical"    #RedHat
+    offer     = "UbuntuServer" #RHEL
+    sku       = "18.04-LTS"    # or "16.04 20.04 22.04LTS"  "7-LVM"
     version   = "latest"
   }
 }
