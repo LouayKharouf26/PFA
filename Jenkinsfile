@@ -4,7 +4,7 @@ pipeline{
         stage("getting code") {
             steps {
                 git url: 'https://github.com/Louaykharouf26/PFA', branch: 'malek',
-                credentialsId: 'jenkins-github-creds'
+                credentialsId: '6d189f1d-0370-4774-a1c4-c7b9c55e494e' //jenkins-github-creds
                 sh "ls -ltr"
             }
         }
