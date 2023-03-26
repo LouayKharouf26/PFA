@@ -24,7 +24,7 @@ pipeline{
                                 echo "terraform init"
                                 terraform init
                                 //terraform plan --var-file=..\terraform.tfvars.json
-                                terraform apply --auto-approve --var-file="..\terraform.tfvars.json"
+                                sh("terraform apply --auto-approve --var-file=..\terraform.tfvars.json")
                             }
                         } else if (env.ENVIR == 'windows'){
                             dir ("terraform-template/windows") {
