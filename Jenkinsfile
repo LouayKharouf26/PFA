@@ -1,46 +1,48 @@
 pipeline{
     agent any
+    parameters {
+        choice(name: 'OSIMAGE', choices: ['linux', 'windows', 'windows_server'], description: 'Select OS image')
+    }
     stages{
         stage("getting code") {
             steps {
                 git url: 'https://github.com/Louaykharouf26/PFA', branch: 'malek',
-                credentialsId: '6d189f1d-0370-4774-a1c4-c7b9c55e494e' //jenkins-github-creds
+                credentialsId: 'github-credentials' //jenkins-github-creds
                 sh "ls -ltr"
             }
         }
-        stage("Setting up infra") {
-            environment {
-                    ENVIR="linux"
-                }
+       stage("Setting up infra") {
             steps {                
                 script {
                     echo "======== executing ========"
                         sh "pwd"
                         sh "ls"
-                        if (env.ENVIR == 'linux') {
+                        if (params.OSIMAGE== 'linux') {
                             dir ("terraform-template/linux") {
                                 sh "pwd"
                                 sh "ls"
                                 echo "terraform init"
-                                terraform init
-                                //terraform plan --var-file=..\terraform.tfvars.json
-                                sh("terraform apply --auto-approve --var-file=..\terraform.tfvars.json")
+                                sh "terraform init"
+                                //sh "terraform apply --auto-approve --var-file=/var/jenkins_home/workspace/test/terraform-template/terraform.tfvars.json"
+                                sh "terraform apply --auto-approve --var-file=../terraform.tfvars.json"
                             }
-                        } else if (env.ENVIR == 'windows'){
+                        } else if (params.OSIMAGE == 'windows'){
                             dir ("terraform-template/windows") {
                                 sh "pwd"
                                 sh "ls"
                                 echo "terraform init"
-                                //terraform plan --var-file=..\terraform.tfvars.json
-                                //terraform apply --auto-approve --var-file=..\terraform.tfvars.json
+                                sh "terraform init"
+                                //sh "terraform apply --auto-approve --var-file=/var/jenkins_home/workspace/test/terraform-template/terraform.tfvars.json"
+                                sh "terraform apply --auto-approve --var-file=../terraform.tfvars.json"
                             }
                         } else {
                             dir ("terraform-template/windows_server") {
                                 sh "pwd"
                                 sh "ls"
                                 echo "terraform init"
-                                //terraform plan --var-file=..\terraform.tfvars.json
-                                //terraform apply --auto-approve --var-file=..\terraform.tfvars.json
+                                sh "terraform init"
+                                //sh "terraform apply --auto-approve --var-file=/var/jenkins_home/workspace/test/terraform-template/terraform.tfvars.json"
+                                sh "terraform apply --auto-approve --var-file=../terraform.tfvars.json"
                             }                    
                         }
                     }            
