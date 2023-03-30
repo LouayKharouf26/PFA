@@ -86,6 +86,17 @@ resource "azurerm_subnet_network_security_group_association" "name" {
   network_security_group_id = azurerm_network_security_group.network-security-group.id
 }
 
+resource "azurerm_public_ip" "public_ip" {
+  name                = "public-ip-1"
+  resource_group_name = azurerm_resource_group.resource-group.name
+  location            = azurerm_resource_group.resource-group.location
+  allocation_method   = "Dynamic"
+
+  tags = {
+    environment = "Production"
+  }
+}
+
 resource "azurerm_network_interface" "network-interface" {
   name                = "${var.virtual_machine_name}-nic"
   location            = azurerm_resource_group.resource-group.location
@@ -94,6 +105,7 @@ resource "azurerm_network_interface" "network-interface" {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.subnet.id
     private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.public_ip.id
   }
 }
 
