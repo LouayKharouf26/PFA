@@ -25,11 +25,11 @@ resource "azurerm_network_security_group" "network-security-group" {
 }
 
 resource "azurerm_network_security_rule" "nsr-1" {
-  name                        = "ssh-in"
+  name                        = "Ssh"
   priority                    = 100
   direction                   = "Inbound"
   access                      = "Allow"
-  protocol                    = "Tcp"
+  protocol                    = "*"
   source_port_range           = "*"
   destination_port_range      = "22"
   source_address_prefix       = "*"
@@ -39,7 +39,7 @@ resource "azurerm_network_security_rule" "nsr-1" {
 }
 
 resource "azurerm_network_security_rule" "nsr-2" {
-  name                        = "ping"
+  name                        = "Ping"
   priority                    = 200
   direction                   = "Inbound"
   access                      = "Allow"
@@ -57,15 +57,28 @@ resource "azurerm_network_security_rule" "nsr-3" {
   priority                    = 300
   direction                   = "Outbound"
   access                      = "Allow"
-  protocol                    = "Tcp"
+  protocol                    = "*"
   source_port_range           = "*"
-  destination_port_range      = "22"
+  destination_port_range      = "*"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
   resource_group_name         = azurerm_resource_group.resource-group.name
   network_security_group_name = azurerm_network_security_group.network-security-group.name
 }
 
+resource "azurerm_network_security_rule" "nsr-4" {
+  name                        = "RDP"
+  priority                    = 400
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "*"
+  source_port_range           = "*"
+  destination_port_range      = "3389"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
+  resource_group_name         = azurerm_resource_group.resource-group.name
+  network_security_group_name = azurerm_network_security_group.network-security-group.name
+}
 
 resource "azurerm_virtual_network" "virtual-network" {
   name                = var.virtual_network_name
@@ -87,7 +100,7 @@ resource "azurerm_subnet_network_security_group_association" "name" {
 }
 
 resource "azurerm_public_ip" "public_ip" {
-  name                = "public-ip-1"
+  name                = "${var.virtual_machine_name}-public-ip"
   resource_group_name = azurerm_resource_group.resource-group.name
   location            = azurerm_resource_group.resource-group.location
   allocation_method   = "Dynamic"
@@ -110,7 +123,7 @@ resource "azurerm_network_interface" "network-interface" {
 }
 
 resource "azurerm_windows_virtual_machine" "example" {
-  nname                           = var.virtual_machine_name
+  name                            = var.virtual_machine_name
   resource_group_name             = azurerm_resource_group.resource-group.name
   location                        = azurerm_resource_group.resource-group.location
   size                            = var.virtual_machine_size #Standard_B2s Standard_F2s Standard_D2s

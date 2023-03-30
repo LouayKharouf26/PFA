@@ -25,11 +25,11 @@ resource "azurerm_network_security_group" "network-security-group" {
 }
 
 resource "azurerm_network_security_rule" "nsr-1" {
-  name                        = "ssh-in"
+  name                        = "Ssh"
   priority                    = 100
   direction                   = "Inbound"
   access                      = "Allow"
-  protocol                    = "Tcp"
+  protocol                    = "*"
   source_port_range           = "*"
   destination_port_range      = "22"
   source_address_prefix       = "*"
@@ -39,7 +39,7 @@ resource "azurerm_network_security_rule" "nsr-1" {
 }
 
 resource "azurerm_network_security_rule" "nsr-2" {
-  name                        = "ping"
+  name                        = "Ping"
   priority                    = 200
   direction                   = "Inbound"
   access                      = "Allow"
@@ -57,9 +57,9 @@ resource "azurerm_network_security_rule" "nsr-3" {
   priority                    = 300
   direction                   = "Outbound"
   access                      = "Allow"
-  protocol                    = "Tcp"
+  protocol                    = "*"
   source_port_range           = "*"
-  destination_port_range      = "22"
+  destination_port_range      = "*"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
   resource_group_name         = azurerm_resource_group.resource-group.name
@@ -87,14 +87,10 @@ resource "azurerm_subnet_network_security_group_association" "name" {
 }
 
 resource "azurerm_public_ip" "public_ip" {
-  name                = "public-ip-1"
+  name                = "${var.virtual_machine_name}-public-ip"
   resource_group_name = azurerm_resource_group.resource-group.name
   location            = azurerm_resource_group.resource-group.location
   allocation_method   = "Dynamic"
-
-  tags = {
-    environment = "Production"
-  }
 }
 
 resource "azurerm_network_interface" "network-interface" {
@@ -122,10 +118,6 @@ resource "azurerm_linux_virtual_machine" "linux-virtual-machine" {
   network_interface_ids = [
     azurerm_network_interface.network-interface.id,
   ]
-  #   admin_ssh_key {
-  #     username   = "adminuser"
-  #     public_key = file("~/.ssh/id_rsa.pub")
-  #   }
 
   os_disk {
     name                 = "myOsDisk"
