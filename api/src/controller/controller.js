@@ -4,6 +4,7 @@ const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const md5 = require("md5");
 const fs = require("fs");
+const request = require("request");
 
 module.exports.getDefault = (req, res) => {
   console.log("hello for get request");
@@ -81,6 +82,8 @@ module.exports.getUserByUsername = async (req, res) => {
 };
 
 module.exports.triggerPipeline = async (req, res) => {
+  const jenkins_url =
+    "http://localhost:5000/job/pfa-pipeline/buildWithParameters?&PARAMETER=linux";
   const params = req.body;
   var name =
     __dirname + "\\..\\..\\..\\terraform-template\\terraform.tfvars.json";
@@ -89,6 +92,19 @@ module.exports.triggerPipeline = async (req, res) => {
     m[p[0]] = p[1];
   });
   fs.writeFileSync(name, JSON.stringify(m));
+  var clientServerOptions = {
+    uri: jenkins_url,
+    body: "",
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Basic " + btoa("mk:116a4a96ddedae25b84ee05251982b2ffe"),
+    },
+  };
+  request(clientServerOptions, function (error, response) {
+    console.log(error, response.body);
+    return;
+  });
   res.send(m);
 };
 // {
