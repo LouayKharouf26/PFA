@@ -11,6 +11,13 @@ pipeline{
                 sh "ls -ltr"
             }
         }
+
+        stage("login") {
+            steps{
+                sh "az login"
+            }
+        }
+
        stage("Setting up infra") {
             steps {                
                 script {
