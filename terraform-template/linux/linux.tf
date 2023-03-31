@@ -131,9 +131,9 @@ resource "azurerm_linux_virtual_machine" "linux-virtual-machine" {
   }
   provisioner "remote-exec" {
     inline = [
-      "apt update",
-      "apt install python3 -y",
-      "curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash -y",
+      "echo ${var.virtual_machine_admin_password} | sudo -S apt update",
+      "echo ${var.virtual_machine_admin_password} | sudo -S apt install python3 -y",
+      "echo ${var.virtual_machine_admin_password} && curl -sL https://aka.ms/InstallAzureCLIDeb | sudo -S bash",
     ]
   }
   os_disk {
