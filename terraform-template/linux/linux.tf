@@ -118,7 +118,20 @@ resource "azurerm_linux_virtual_machine" "linux-virtual-machine" {
   network_interface_ids = [
     azurerm_network_interface.network-interface.id,
   ]
+  connection {
+    type     = "ssh"
+    user     = var.virtual_machine_admin_username
+    password = var.virtual_machine_admin_password
+    host     = azurerm_public_ip.public_ip.ip_address
 
+  }
+  provisioner "remote-exec" {
+    inline = [
+      "apt update",
+      "apt install python3 -y",
+      "python3 --version",
+    ]
+  }
   os_disk {
     name                 = var.virtual_machine_os_disk_name                 #"myOsDisk"
     caching              = var.virtual_machine_os_disk_caching              #"ReadWrite"
