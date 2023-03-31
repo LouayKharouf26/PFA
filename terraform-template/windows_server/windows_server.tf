@@ -13,15 +13,15 @@ provider "azurerm" {
   subscription_id = var.subscription_id
 }
 
-resource "azurerm_resource_group" "resource-group" {
-  name     = var.resource_group_name
-  location = "West Europe"
-}
+# resource "azurerm_resource_group" "resource-group" {
+#   name     = "pfa"
+#   location = var.resource_group_location
+# }
 
 resource "azurerm_network_security_group" "network-security-group" {
   name                = "default-security-group"
-  location            = azurerm_resource_group.resource-group.location
-  resource_group_name = azurerm_resource_group.resource-group.name
+  location            = var.resource_group_location
+  resource_group_name = var.resource_group_name
 }
 
 resource "azurerm_network_security_rule" "nsr-1" {
@@ -34,7 +34,7 @@ resource "azurerm_network_security_rule" "nsr-1" {
   destination_port_range      = "22"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = azurerm_resource_group.resource-group.name
+  resource_group_name         = var.resource_group_name
   network_security_group_name = azurerm_network_security_group.network-security-group.name
 }
 
@@ -48,7 +48,7 @@ resource "azurerm_network_security_rule" "nsr-2" {
   destination_port_range      = "*"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = azurerm_resource_group.resource-group.name
+  resource_group_name         = var.resource_group_name
   network_security_group_name = azurerm_network_security_group.network-security-group.name
 }
 
@@ -62,7 +62,7 @@ resource "azurerm_network_security_rule" "nsr-3" {
   destination_port_range      = "*"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = azurerm_resource_group.resource-group.name
+  resource_group_name         = var.resource_group_name
   network_security_group_name = azurerm_network_security_group.network-security-group.name
 }
 
@@ -76,20 +76,20 @@ resource "azurerm_network_security_rule" "nsr-4" {
   destination_port_range      = "3389"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = azurerm_resource_group.resource-group.name
+  resource_group_name         = var.resource_group_name
   network_security_group_name = azurerm_network_security_group.network-security-group.name
 }
 
 resource "azurerm_virtual_network" "virtual-network" {
   name                = var.virtual_network_name
-  location            = azurerm_resource_group.resource-group.location
-  resource_group_name = azurerm_resource_group.resource-group.name
+  location            = var.resource_group_location
+  resource_group_name = var.resource_group_name
   address_space       = ["10.0.0.0/16"]
 }
 
 resource "azurerm_subnet" "subnet" {
   name                 = var.subnet_name
-  resource_group_name  = azurerm_resource_group.resource-group.name
+  resource_group_name  = var.resource_group_name
   virtual_network_name = azurerm_virtual_network.virtual-network.name
   address_prefixes     = ["10.0.1.0/24"]
 }
@@ -101,15 +101,15 @@ resource "azurerm_subnet_network_security_group_association" "name" {
 
 resource "azurerm_public_ip" "public_ip" {
   name                = "${var.virtual_machine_name}-public-ip"
-  resource_group_name = azurerm_resource_group.resource-group.name
-  location            = azurerm_resource_group.resource-group.location
+  resource_group_name = var.resource_group_name
+  location            = var.resource_group_location
   allocation_method   = "Dynamic"
 }
 
 resource "azurerm_network_interface" "network-interface" {
   name                = "${var.virtual_machine_name}-nic"
-  location            = azurerm_resource_group.resource-group.location
-  resource_group_name = azurerm_resource_group.resource-group.name
+  location            = var.resource_group_location
+  resource_group_name = var.resource_group_name
   ip_configuration {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.subnet.id
@@ -118,29 +118,29 @@ resource "azurerm_network_interface" "network-interface" {
   }
 }
 
-resource "azurerm_windows_virtual_machine" "example" {
+resource "azurerm_linux_virtual_machine" "windows-server-virtual-machine" {
   name                            = var.virtual_machine_name
-  resource_group_name             = azurerm_resource_group.resource-group.name
-  location                        = azurerm_resource_group.resource-group.location
+  resource_group_name             = var.resource_group_name
+  location                        = var.resource_group_location
   size                            = var.virtual_machine_size #Standard_B2s Standard_F2s Standard_D2s
   computer_name                   = var.virtual_machine_name
-  admin_username                  = "mk"
-  admin_password                  = "PassStudent123"
+  admin_username                  = var.virtual_machine_admin_username
+  admin_password                  = var.virtual_machine_admin_password
   disable_password_authentication = false
   network_interface_ids = [
     azurerm_network_interface.network-interface.id,
   ]
 
   os_disk {
-    name                 = "myOsDisk"
-    caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS" #Standard_LRS, StandardSSD_LRS, Premium_LRS, StandardSSD_ZRS Premium_ZRS
+    name                 = var.virtual_machine_os_disk_name                 #"myOsDisk"
+    caching              = var.virtual_machine_os_disk_caching              #"ReadWrite"
+    storage_account_type = var.virtual_machine_os_disk_storage_account_type #"Standard_LRS" #Standard_LRS, StandardSSD_LRS, Premium_LRS, StandardSSD_ZRS Premium_ZRS
   }
 
   source_image_reference {
     publisher = "MicrosoftWindowsServer"
     offer     = "WindowsServer"
-    sku       = "2016-Datacenter" #2019-Datacenter 2012-Datacenter 2022-Datacenter
+    sku       = var.virtual_machine_sku #2019-Datacenter 2012-Datacenter 2022-Datacenter
     version   = "latest"
   }
 }
