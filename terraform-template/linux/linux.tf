@@ -133,7 +133,7 @@ resource "azurerm_linux_virtual_machine" "linux-virtual-machine" {
     inline = [
       "apt update",
       "apt install python3 -y",
-      "python3 --version",
+      "curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash -y",
     ]
   }
   os_disk {
