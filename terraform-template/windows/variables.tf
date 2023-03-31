@@ -16,7 +16,7 @@ variable "virtual_machine_size" {}
 
 variable "virtual_machine_admin_username" {}
 
-variable "virtual_machine_admin_username" {}
+variable "virtual_machine_admin_password" {}
 
 variable "virtual_machine_os_disk_name" {}
 
