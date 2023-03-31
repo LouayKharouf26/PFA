@@ -105,7 +105,6 @@ resource "azurerm_network_interface" "network-interface" {
   }
 }
 
-
 resource "azurerm_linux_virtual_machine" "linux-virtual-machine" {
   name                            = var.virtual_machine_name
   resource_group_name             = var.resource_group_name
@@ -118,11 +117,16 @@ resource "azurerm_linux_virtual_machine" "linux-virtual-machine" {
   network_interface_ids = [
     azurerm_network_interface.network-interface.id,
   ]
+
+  # output "public-ip" {
+  #   value = azurerm_linux_virtual_machine.linux-virtual-machine.public_ip_address
+  # }
+
   connection {
     type     = "ssh"
     user     = var.virtual_machine_admin_username
     password = var.virtual_machine_admin_password
-    host     = azurerm_public_ip.public_ip.ip_address
+    host     = azurerm_linux_virtual_machine.linux-virtual-machine.public_ip_address
 
   }
   provisioner "remote-exec" {

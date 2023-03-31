@@ -12,11 +12,11 @@ pipeline{
             }
         }
 
-        stage("login") {
-            steps{
-                sh "az login"
-            }
-        }
+        // stage("login") {
+        //     steps{
+        //         sh "az login"
+        //     }
+        // }
 
        stage("Setting up infra") {
             steps {                
