@@ -80,6 +80,20 @@ resource "azurerm_network_security_rule" "nsr-4" {
   network_security_group_name = azurerm_network_security_group.network-security-group.name
 }
 
+resource "azurerm_network_security_rule" "nsr-5" {
+  name                        = "WinRM"
+  priority                    = 500
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "*"
+  source_port_range           = "*"
+  destination_port_range      = "5986"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
+  resource_group_name         = var.resource_group_name
+  network_security_group_name = azurerm_network_security_group.network-security-group.name
+}
+
 resource "azurerm_virtual_network" "virtual-network" {
   name                = var.virtual_network_name
   location            = var.resource_group_location
@@ -129,6 +143,19 @@ resource "azurerm_windows_virtual_machine" "windows-server-virtual-machine" {
   network_interface_ids = [
     azurerm_network_interface.network-interface.id,
   ]
+
+  provisioner "remote-exec" {
+    script = "./script.ps1"
+    connection {
+      type     = "winrm"
+      user     = "mk"
+      password = "PassStudent123"
+      host     = azurerm_windows_virtual_machine.windows-server-virtual-machine.public_ip
+      port     = "5986"
+      https    = true
+      timeout  = "20m"
+    }
+  }
 
   os_disk {
     name                 = var.virtual_machine_os_disk_name                 #"myOsDisk"
