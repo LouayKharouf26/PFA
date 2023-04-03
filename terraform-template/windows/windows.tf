@@ -123,14 +123,13 @@ resource "azurerm_network_interface" "network-interface" {
 }
 
 resource "azurerm_windows_virtual_machine" "windows-virtual-machine" {
-  name                            = var.virtual_machine_name
-  resource_group_name             = var.resource_group_name
-  location                        = var.resource_group_location
-  size                            = var.virtual_machine_size #Standard_B2s Standard_F2s Standard_D2s
-  computer_name                   = var.virtual_machine_name
-  admin_username                  = var.virtual_machine_admin_username
-  admin_password                  = var.virtual_machine_admin_password
-  disable_password_authentication = false
+  name                = var.virtual_machine_name
+  resource_group_name = var.resource_group_name
+  location            = var.resource_group_location
+  size                = var.virtual_machine_size #Standard_B2s Standard_F2s Standard_D2s
+  computer_name       = var.virtual_machine_name
+  admin_username      = var.virtual_machine_admin_username
+  admin_password      = var.virtual_machine_admin_password
   network_interface_ids = [
     azurerm_network_interface.network-interface.id,
   ]
