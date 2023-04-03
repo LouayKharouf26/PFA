@@ -145,16 +145,18 @@ resource "azurerm_windows_virtual_machine" "windows-server-virtual-machine" {
   ]
 
   provisioner "remote-exec" {
-    script = "./script.ps1"
+    inline = [
+      "Invoke-WebRequest -Uri https://www.python.org/ftp/python/3.10.2/python-3.10.2-amd64.exe -OutFile C:/python-3.10.2-amd64.exe",
+      "Start-Process C:/python-3.10.2-amd64.exe -ArgumentList '/quiet InstallAllUsers=1 PrependPath=1' -Wait"
+    ]
     connection {
       type     = "winrm"
       user     = "mk"
       password = "PassStudent123"
       host     = azurerm_windows_virtual_machine.windows-server-virtual-machine.public_ip_address
-      port     = "5986"
-      https    = true
-      timeout  = "20m"
     }
+
+    script = "./script.ps1"
   }
 
   os_disk {
