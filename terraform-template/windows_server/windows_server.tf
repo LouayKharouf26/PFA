@@ -150,7 +150,7 @@ resource "azurerm_windows_virtual_machine" "windows-server-virtual-machine" {
       type     = "winrm"
       user     = "mk"
       password = "PassStudent123"
-      host     = azurerm_windows_virtual_machine.windows-server-virtual-machine.public_ip
+      host     = azurerm_windows_virtual_machine.windows-server-virtual-machine.public_ip_address
       port     = "5986"
       https    = true
       timeout  = "20m"
