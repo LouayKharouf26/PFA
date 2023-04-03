@@ -118,7 +118,7 @@ resource "azurerm_network_interface" "network-interface" {
   }
 }
 
-resource "azurerm_linux_virtual_machine" "windows-server-virtual-machine" {
+resource "azurerm_windows_virtual_machine" "windows-server-virtual-machine" {
   name                            = var.virtual_machine_name
   resource_group_name             = var.resource_group_name
   location                        = var.resource_group_location
@@ -130,22 +130,6 @@ resource "azurerm_linux_virtual_machine" "windows-server-virtual-machine" {
   network_interface_ids = [
     azurerm_network_interface.network-interface.id,
   ]
-
-  connection {
-    type     = "ssh"
-    user     = var.virtual_machine_admin_username
-    password = var.virtual_machine_admin_password
-    host     = azurerm_linux_virtual_machine.windows-server-virtual-machine.public_ip_address
-
-  }
-  provisioner "remote-exec" {
-    inline = [
-      "echo ${var.virtual_machine_admin_password} | sudo -S apt update",
-      "echo ${var.virtual_machine_admin_password} | sudo -S apt install python3 -y",
-      "python3 --version"
-      # "echo ${var.virtual_machine_admin_password} && curl -sL https://aka.ms/InstallAzureCLIDeb | sudo -S bash",
-    ]
-  }
 
   os_disk {
     name                 = var.virtual_machine_os_disk_name                 #"myOsDisk"

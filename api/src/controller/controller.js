@@ -82,7 +82,7 @@ module.exports.getUserByUsername = async (req, res) => {
 };
 
 module.exports.triggerPipeline = async (req, res) => {
-  const jenkins_url = `http://localhost:5000/job/pfa-pipeline/buildWithParameters?&PARAMETER=${req.body.parameter}`;
+  const jenkins_url = `http://localhost:5000/job/pfa-pipeline/buildWithParameters?&OSIMAGE=${req.body.parameter}`;
   const params = req.body;
   var name =
     __dirname + "\\..\\..\\..\\terraform-template\\terraform.tfvars.json";

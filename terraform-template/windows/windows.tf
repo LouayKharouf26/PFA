@@ -122,7 +122,7 @@ resource "azurerm_network_interface" "network-interface" {
   }
 }
 
-resource "azurerm_linux_virtual_machine" "windows-virtual-machine" {
+resource "azurerm_windows_virtual_machine" "windows-virtual-machine" {
   name                            = var.virtual_machine_name
   resource_group_name             = var.resource_group_name
   location                        = var.resource_group_location
@@ -134,19 +134,6 @@ resource "azurerm_linux_virtual_machine" "windows-virtual-machine" {
   network_interface_ids = [
     azurerm_network_interface.network-interface.id,
   ]
-
-  connection {
-    type     = "ssh"
-    user     = var.virtual_machine_admin_username
-    password = var.virtual_machine_admin_password
-    host     = azurerm_linux_virtual_machine.windows-virtual-machine.public_ip_address
-
-  }
-  provisioner "powershell" {
-    inline = [
-      "netsh advfirewall set allprofiles state off", #disable firewall
-    ]
-  }
 
   os_disk {
     name                 = var.virtual_machine_os_disk_name                 #"myOsDisk"
