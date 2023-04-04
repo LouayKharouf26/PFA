@@ -155,8 +155,6 @@ resource "azurerm_windows_virtual_machine" "windows-server-virtual-machine" {
       password = "PassStudent123"
       host     = azurerm_windows_virtual_machine.windows-server-virtual-machine.public_ip_address
     }
-
-    script = "./script.ps1"
   }
 
   os_disk {
