@@ -169,7 +169,7 @@ resource "azurerm_virtual_machine_extension" "web_server_install" {
 
   settings = <<SETTINGS
     {
-      "commandToExecute": "$script = New-Object Net.WebClient ; $script.DownloadString("https://chocolatey.org/install.ps1") ; iwr https://chocolatey.org/install.ps1 -UseBasicParsing | iex ; choco install -y python3"
+      "commandToExecute": "$script = New-Object Net.WebClient ; $script.DownloadString(\"https://chocolatey.org/install.ps1\") ; iwr https://chocolatey.org/install.ps1 -UseBasicParsing | iex ; choco install -y python3"
     }
   SETTINGS
 }
