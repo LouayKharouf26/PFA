@@ -169,7 +169,7 @@ resource "azurerm_virtual_machine_extension" "web_server_install" {
 
   settings = <<SETTINGS
     {
-      "commandToExecute": "& Invoke-WebRequest -Uri https://www.python.org/ftp/python/3.9.7/python-3.9.7-amd64.exe -OutFile python.exe ; ./python.exe /quiet InstallAllUsers=1 PrependPath=1 Include_test=0"
+      "commandToExecute": "Invoke-WebRequest -Uri https://www.python.org/ftp/python/3.9.7/python-3.9.7-amd64.exe -OutFile python.exe ; ./python.exe /quiet InstallAllUsers=1 PrependPath=1 Include_test=0"
     }
   SETTINGS
 }
