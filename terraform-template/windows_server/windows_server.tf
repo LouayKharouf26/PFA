@@ -156,61 +156,76 @@ resource "azurerm_windows_virtual_machine" "windows-server-virtual-machine" {
     sku       = var.virtual_machine_sku #2019-Datacenter 2012-Datacenter 2022-Datacenter
     version   = "latest"
   }
-}
-
-resource "azurerm_template_deployment" "example" {
-  name                = "example-deployment"
-  resource_group_name = var.resource_group_name
-  deployment_mode     = "Incremental"
-  template_body       = <<DEPLOY
-  {
-  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "vmName": {
-      "type": "string",
-      "defaultValue": "myvm",
-      "metadata": {
-        "description": "Name of the virtual machine."
-      }
-    }
-  },
-  "variables": {
-    "scriptUrl": "https://bootstrap.pypa.io/get-pip.py",
-    "scriptName": "get-pip.py",
-    "scriptArgs": "--upgrade pip"
-  },
-  "resources": [
-    {
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "apiVersion": "2019-07-01",
-      "name": "[concat(parameters('vmName'), '/install-python')]",
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
-      ],
-      "properties": {
-        "publisher": "Microsoft.Compute",
-        "type": "CustomScriptExtension",
-        "typeHandlerVersion": "1.9",
-        "autoUpgradeMinorVersion": true,
-        "settings": {
-          "fileUris": [
-            "[variables('scriptUrl')]"
-          ],
-          "commandToExecute": "python [concat('./', variables('scriptName'))] [variables('scriptArgs')]"
-        }
-      }
-    }
-  ]
+  provisioner "file" {
+    source      = "scripts/get-pip.py"
+    destination = "C:\\get-pip.py"
   }
-DEPLOY
 
-  parameters = {
-    "vmName" = azurerm_windows_virtual_machine.windows-server-virtual-machine.name
+  provisioner "remote-exec" {
+    inline = [
+      "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -ExecutionPolicy Bypass -Command .\\get-pip.py"
+    ]
   }
 }
 
-output "vm_public_ip_address" {
-  value = azurerm_template_deployment.example.outputs["publicIPAddress"]
-}
+
+
+
+
+
+# resource "azurerm_template_deployment" "example" {
+#   name                = "example-deployment"
+#   resource_group_name = var.resource_group_name
+#   deployment_mode     = "Incremental"
+#   template_body       = <<DEPLOY
+#   {
+#   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+#   "contentVersion": "1.0.0.0",
+#   "parameters": {
+#     "vmName": {
+#       "type": "string",
+#       "defaultValue": "myvm",
+#       "metadata": {
+#         "description": "Name of the virtual machine."
+#       }
+#     }
+#   },
+#   "variables": {
+#     "scriptUrl": "https://bootstrap.pypa.io/get-pip.py",
+#     "scriptName": "get-pip.py",
+#     "scriptArgs": "--upgrade pip"
+#   },
+#   "resources": [
+#     {
+#       "type": "Microsoft.Compute/virtualMachines/extensions",
+#       "apiVersion": "2019-07-01",
+#       "name": "[concat(parameters('vmName'), '/install-python')]",
+#       "location": "[resourceGroup().location]",
+#       "dependsOn": [
+#         "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+#       ],
+#       "properties": {
+#         "publisher": "Microsoft.Compute",
+#         "type": "CustomScriptExtension",
+#         "typeHandlerVersion": "1.9",
+#         "autoUpgradeMinorVersion": true,
+#         "settings": {
+#           "fileUris": [
+#             "[variables('scriptUrl')]"
+#           ],
+#           "commandToExecute": "python [concat('./', variables('scriptName'))] [variables('scriptArgs')]"
+#         }
+#       }
+#     }
+#   ]
+#   }
+# DEPLOY
+
+#   parameters = {
+#     "vmName" = azurerm_windows_virtual_machine.windows-server-virtual-machine.name
+#   }
+# }
+
+# output "vm_public_ip_address" {
+#   value = azurerm_template_deployment.example.outputs["publicIPAddress"]
+# }
