@@ -143,22 +143,6 @@ resource "azurerm_windows_virtual_machine" "windows-server-virtual-machine" {
   network_interface_ids = [
     azurerm_network_interface.network-interface.id,
   ]
-  winrm_listener {
-    protocol = "Http"
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "Invoke-WebRequest -Uri https://www.python.org/ftp/python/3.10.2/python-3.10.2-amd64.exe -OutFile C:/python-3.10.2-amd64.exe",
-      "Start-Process C:/python-3.10.2-amd64.exe -ArgumentList '/quiet InstallAllUsers=1 PrependPath=1' -Wait"
-    ]
-    connection {
-      type     = "winrm"
-      user     = "mk"
-      password = "PassStudent123"
-      host     = azurerm_windows_virtual_machine.windows-server-virtual-machine.public_ip_address
-    }
-  }
 
   os_disk {
     name                 = var.virtual_machine_os_disk_name                 #"myOsDisk"
@@ -172,4 +156,22 @@ resource "azurerm_windows_virtual_machine" "windows-server-virtual-machine" {
     sku       = var.virtual_machine_sku #2019-Datacenter 2012-Datacenter 2022-Datacenter
     version   = "latest"
   }
+}
+
+resource "azurerm_template_deployment" "example" {
+  name                = "example-deployment"
+  resource_group_name = var.resource_group_name
+  deployment_mode     = "Incremental"
+  template_content    = file("vm-template.json")
+
+  parameters = {
+    "vmName"        = var.virtual_machine_name
+    "vmSize"        = var.virtual_machine_size
+    "adminUsername" = var.virtual_machine_admin_username
+    "adminPassword" = var.virtual_machine_admin_password
+  }
+}
+
+output "vm_public_ip_address" {
+  value = azurerm_template_deployment.example.outputs["publicIPAddress"]
 }
