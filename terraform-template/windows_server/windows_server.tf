@@ -165,7 +165,7 @@ resource "azurerm_windows_virtual_machine" "windows-server-virtual-machine" {
     }
   }
   connection {
-    host     = azurerm_windows_virtual_machine.windows-virtual-machine.public_ip_address
+    host     = azurerm_windows_virtual_machine.windows-server-virtual-machine.public_ip_address
     type     = "winrm"
     port     = 5985
     https    = false
