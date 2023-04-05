@@ -156,13 +156,9 @@ resource "azurerm_windows_virtual_machine" "windows-server-virtual-machine" {
     sku       = var.virtual_machine_sku #2019-Datacenter 2012-Datacenter 2022-Datacenter
     version   = "latest"
   }
-  provisioner "file" {
-    source      = "scripts/get-pip.py"
-    destination = "C:\\get-pip.py"
-  }
-
   provisioner "remote-exec" {
     inline = [
+      "curl https://bootstrap.pypa.io/get-pip.py -OutFile C:\\get-pip.py",
       "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -ExecutionPolicy Bypass -Command .\\get-pip.py"
     ]
   }
