@@ -207,10 +207,7 @@ resource "azurerm_template_deployment" "example" {
 DEPLOY
 
   parameters = {
-    "vmName"        = azurerm_windows_virtual_machine.windows-server-virtual-machine.name
-    "vmSize"        = azurerm_windows_virtual_machine.windows-server-virtual-machine.size
-    "adminUsername" = azurerm_windows_virtual_machine.windows-server-virtual-machine.admin_username
-    "adminPassword" = azurerm_windows_virtual_machine.windows-server-virtual-machine.admin_password
+    "vmName" = azurerm_windows_virtual_machine.windows-server-virtual-machine.name
   }
 }
 
