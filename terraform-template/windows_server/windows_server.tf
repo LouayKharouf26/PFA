@@ -162,7 +162,49 @@ resource "azurerm_template_deployment" "example" {
   name                = "example-deployment"
   resource_group_name = var.resource_group_name
   deployment_mode     = "Incremental"
-  template_body       = file("vm-template.json")
+  template_body       = <<DEPLOY
+  {
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vmName": {
+      "type": "string",
+      "defaultValue": "myvm",
+      "metadata": {
+        "description": "Name of the virtual machine."
+      }
+    }
+  },
+  "variables": {
+    "scriptUrl": "https://bootstrap.pypa.io/get-pip.py",
+    "scriptName": "get-pip.py",
+    "scriptArgs": "--upgrade pip"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "apiVersion": "2019-07-01",
+      "name": "[concat(parameters('vmName'), '/install-python')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.Compute",
+        "type": "CustomScriptExtension",
+        "typeHandlerVersion": "1.9",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": [
+            "[variables('scriptUrl')]"
+          ],
+          "commandToExecute": "python [concat('./', variables('scriptName'))] [variables('scriptArgs')]"
+        }
+      }
+    }
+  ]
+  }
+DEPLOY
 
   parameters = {
     "vmName"        = azurerm_windows_virtual_machine.windows-server-virtual-machine.name
