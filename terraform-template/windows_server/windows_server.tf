@@ -144,17 +144,45 @@ resource "azurerm_windows_virtual_machine" "windows-server-virtual-machine" {
     azurerm_network_interface.network-interface.id,
   ]
 
+  os_profile_windows_config {
+    provision_vm_agent = true
+    winrm {
+      protocol = "http"
+    }
+    # Auto-Login's required to configure WinRM
+    additional_unattend_config {
+      pass         = "oobeSystem"
+      component    = "Microsoft-Windows-Shell-Setup"
+      setting_name = "AutoLogon"
+      content      = "<AutoLogon><Password><Value>${var.virtual_machine_admin_password}</Value></Password><Enabled>true</Enabled><LogonCount>1</LogonCount><Username>${var.virtual_machine_admin_username}</Username></AutoLogon>"
+    }
+    # Unattend config is to enable basic auth in WinRM, required for the provisioner stage.
+    additional_unattend_config {
+      pass         = "oobeSystem"
+      component    = "Microsoft-Windows-Shell-Setup"
+      setting_name = "FirstLogonCommands"
+      content      = file("./files/FirstLogonCommands.xml")
+    }
+  }
+  connection {
+    host     = azurerm_windows_virtual_machine.windows-virtual-machine.public_ip_address
+    type     = "winrm"
+    port     = 5985
+    https    = false
+    timeout  = "2m"
+    user     = var.virtual_machine_admin_username
+    password = var.virtual_machine_admin_password
+  }
+
+  provisioner "file" {
+    source      = "files/config.ps1"
+    destination = "c:/terraform/config.ps1"
+  }
+
   provisioner "remote-exec" {
     inline = [
-      "Invoke-WebRequest -Uri https://www.python.org/ftp/python/3.10.2/python-3.10.2-amd64.exe -OutFile C:/python-3.10.2-amd64.exe",
-      "Start-Process C:/python-3.10.2-amd64.exe -ArgumentList '/quiet InstallAllUsers=1 PrependPath=1' -Wait"
+      "PowerShell.exe -ExecutionPolicy Bypass c:\\terraform\\config.ps1",
     ]
-    connection {
-      type     = "winrm"
-      user     = "mk"
-      password = "PassStudent123"
-      host     = azurerm_windows_virtual_machine.windows-server-virtual-machine.public_ip_address
-    }
   }
 
   os_disk {
