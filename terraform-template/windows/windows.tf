@@ -130,9 +130,52 @@ resource "azurerm_windows_virtual_machine" "windows-virtual-machine" {
   computer_name       = var.virtual_machine_name
   admin_username      = var.virtual_machine_admin_username
   admin_password      = var.virtual_machine_admin_password
+  custom_data         = file("./files/winrm.ps1")
   network_interface_ids = [
     azurerm_network_interface.network-interface.id,
   ]
+
+  os_profile_windows_config {
+    provision_vm_agent = true
+    winrm {
+      protocol = "http"
+    }
+    # Auto-Login's required to configure WinRM
+    additional_unattend_config {
+      pass         = "oobeSystem"
+      component    = "Microsoft-Windows-Shell-Setup"
+      setting_name = "AutoLogon"
+      content      = "<AutoLogon><Password><Value>${var.virtual_machine_admin_password}</Value></Password><Enabled>true</Enabled><LogonCount>1</LogonCount><Username>${var.virtual_machine_admin_username}</Username></AutoLogon>"
+    }
+    # Unattend config is to enable basic auth in WinRM, required for the provisioner stage.
+    additional_unattend_config {
+      pass         = "oobeSystem"
+      component    = "Microsoft-Windows-Shell-Setup"
+      setting_name = "FirstLogonCommands"
+      content      = file("./files/FirstLogonCommands.xml")
+    }
+  }
+  connection {
+    host     = azurerm_windows_virtual_machine.windows-virtual-machine.public_ip_address
+    type     = "winrm"
+    port     = 5985
+    https    = false
+    timeout  = "2m"
+    user     = var.virtual_machine_admin_username
+    password = var.virtual_machine_admin_password
+  }
+
+  provisioner "file" {
+    source      = "files/config.ps1"
+    destination = "c:/terraform/config.ps1"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "PowerShell.exe -ExecutionPolicy Bypass c:\\terraform\\config.ps1",
+    ]
+  }
+
 
   os_disk {
     name                 = var.virtual_machine_os_disk_name                 #"myOsDisk"
