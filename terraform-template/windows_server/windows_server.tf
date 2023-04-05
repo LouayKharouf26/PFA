@@ -168,7 +168,7 @@ resource "azurerm_template_deployment" "example" {
   template_body       = file("vm-template.json")
 
   parameters = {
-    "vmName"        = vmName
+    "vmName"        = azurerm_windows_virtual_machine.windows-server-virtual-machine.name
     "vmSize"        = var.virtual_machine_size
     "adminUsername" = var.virtual_machine_admin_username
     "adminPassword" = var.virtual_machine_admin_password
