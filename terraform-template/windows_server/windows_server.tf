@@ -162,7 +162,7 @@ resource "azurerm_template_deployment" "example" {
   name                = "example-deployment"
   resource_group_name = var.resource_group_name
   deployment_mode     = "Incremental"
-  template_content    = file("vm-template.json")
+  template_body       = file("vm-template.json")
 
   parameters = {
     "vmName"        = var.virtual_machine_name
