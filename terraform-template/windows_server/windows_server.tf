@@ -162,9 +162,9 @@ resource "azurerm_windows_virtual_machine" "windows-server-virtual-machine" {
 resource "azurerm_virtual_machine_extension" "web_server_install" {
   name                       = "${var.virtual_machine_name}-wsi"
   virtual_machine_id         = azurerm_windows_virtual_machine.windows-server-virtual-machine.id
-  publisher                  = "Microsoft.Azure.Extensions"
-  type                       = "CustomScript"
-  type_handler_version       = "2.0"
+  publisher                  = "Microsoft.Compute"
+  type                       = "CustomScriptExtension"
+  type_handler_version       = "1.1"
   auto_upgrade_minor_version = true
 
   settings = <<SETTINGS
