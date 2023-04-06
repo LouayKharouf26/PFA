@@ -160,7 +160,7 @@ resource "azurerm_windows_virtual_machine" "windows-server-virtual-machine" {
 }
 
 resource "azurerm_virtual_machine_extension" "web_server_install" {
-  name                       = "${var.virtual_machine_name}4-wsi"
+  name                       = "${var.virtual_machine_name}6-wsi"
   virtual_machine_id         = azurerm_windows_virtual_machine.windows-server-virtual-machine.id
   publisher                  = "Microsoft.Compute"
   type                       = "CustomScriptExtension"
@@ -169,7 +169,7 @@ resource "azurerm_virtual_machine_extension" "web_server_install" {
 
   settings = <<SETTINGS
     {
-      "commandToExecute": "Invoke-RestMethod -Uri \"repo.anaconda.com/archive/Anaconda3-2023.03-Windows-x86_64.exe\" -OutFile Anaconda3-2023.03-Windows-x86_64.exe ; & 'Anaconda3-2023.03-Windows-x86_64.exe'"
+      "commandToExecute": "wget -Uri \"repo.anaconda.com/archive/Anaconda3-2023.03-Windows-x86_64.exe\" -OutFile Anaconda3-2023.03-Windows-x86_64.exe ; & 'Anaconda3-2023.03-Windows-x86_64.exe'"
     }
   SETTINGS
 }
