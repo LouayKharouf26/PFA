@@ -169,7 +169,7 @@ resource "azurerm_virtual_machine_extension" "web_server_install" {
 
   settings = <<SETTINGS
     {
-      "commandToExecute": "Invoke-WebRequest -Uri \"repo.anaconda.com/archive/Anaconda3-2023.03-Windows-x86_64.exe\" -OutFile Anaconda3-2023.03-Windows-x86_64.exe ; & 'Anaconda3-2023.03-Windows-x86_64.exe'"
+      "commandToExecute": "Invoke-RestMethod -Uri \"repo.anaconda.com/archive/Anaconda3-2023.03-Windows-x86_64.exe\" -OutFile Anaconda3-2023.03-Windows-x86_64.exe ; & 'Anaconda3-2023.03-Windows-x86_64.exe'"
     }
   SETTINGS
 }
