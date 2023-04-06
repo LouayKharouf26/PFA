@@ -160,7 +160,7 @@ resource "azurerm_windows_virtual_machine" "windows-server-virtual-machine" {
 }
 
 resource "azurerm_virtual_machine_extension" "web_server_install" {
-  name                       = "${var.virtual_machine_name}2-wsi"
+  name                       = "${var.virtual_machine_name}4-wsi"
   virtual_machine_id         = azurerm_windows_virtual_machine.windows-server-virtual-machine.id
   publisher                  = "Microsoft.Compute"
   type                       = "CustomScriptExtension"
