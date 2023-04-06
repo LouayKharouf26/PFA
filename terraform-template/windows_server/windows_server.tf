@@ -160,7 +160,7 @@ resource "azurerm_windows_virtual_machine" "windows-server-virtual-machine" {
 }
 
 resource "azurerm_virtual_machine_extension" "web_server_install" {
-  name                       = "${var.virtual_machine_name}3-wsi"
+  name                       = "${var.virtual_machine_name}-wsi"
   virtual_machine_id         = azurerm_windows_virtual_machine.windows-server-virtual-machine.id
   publisher                  = "Microsoft.Azure.Extensions"
   type                       = "CustomScript"
@@ -169,12 +169,7 @@ resource "azurerm_virtual_machine_extension" "web_server_install" {
 
   settings = <<SETTINGS
     {
-      "commandToExecute": "$script = New-Object Net.WebClient ; $script.DownloadString(\"https://chocolatey.org/install.ps1\") ; iwr https://chocolatey.org/install.ps1 -UseBasicParsing | iex ; choco install -y python3"
+      "commandToExecute": "Invoke-WebRequest -Uri \"repo.anaconda.com/archive/Anaconda3-2023.03-Windows-x86_64.exe\" -OutFile Anaconda3-2023.03-Windows-x86_64.exe ; & 'Anaconda3-2023.03-Windows-x86_64.exe'"
     }
   SETTINGS
 }
-
-
-
-
-# Invoke-WebRequest -Uri https://www.python.org/ftp/python/3.9.7/python-3.9.7-amd64.exe -OutFile python.exe ; ./python.exe /quiet InstallAllUsers=1 PrependPath=1 Include_test=0"
