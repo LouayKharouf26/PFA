@@ -39,8 +39,8 @@ pipeline{
                                 sh "ls"
                                 echo "terraform init"
                                 sh "terraform init"
-                                //sh "terraform apply --auto-approve --var-file=/var/jenkins_home/workspace/test/terraform-template/terraform.tfvars.json"
-                                sh "terraform apply --auto-approve --var-file=../terraform.tfvars.json"
+                                sh "terraform apply --auto-approve --var-file=/var/jenkins_home/workspace/PFAPIPELINE/terraform-template/terraform.tfvars.json"
+                                //sh "terraform apply --auto-approve --var-file=../terraform.tfvars.json"
                             }
                         } else {
                             dir ("terraform-template/windows_server") {
@@ -48,8 +48,8 @@ pipeline{
                                 sh "ls"
                                 echo "terraform init"
                                 sh "terraform init"
-                                //sh "terraform apply --auto-approve --var-file=/var/jenkins_home/workspace/test/terraform-template/terraform.tfvars.json"
-                                sh "terraform apply --auto-approve --var-file=../terraform.tfvars.json"
+                                sh "terraform apply --auto-approve --var-file=/var/jenkins_home/workspace/PFAPIPELINE/terraform-template/terraform.tfvars.json"
+                                //sh "terraform apply --auto-approve --var-file=../terraform.tfvars.json"
                             }                    
                         }
                     }            
