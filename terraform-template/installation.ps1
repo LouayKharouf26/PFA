@@ -18,3 +18,13 @@ Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
 # Start the OpenSSH Server service and set it to start automatically
 Start-Service sshd
 Set-Service -Name sshd -StartupType 'Automatic'
+
+#Install Chocolatey
+# Download and run the Chocolatey installation script
+Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+
+# Add the Chocolatey bin directory to the PATH environment variable
+$env:PATH = "$($env:PATH);C:\ProgramData\chocolatey\bin"
+
+# Check that Chocolatey is installed correctly
+choco -v
