@@ -132,7 +132,7 @@ resource "azurerm_storage_account" "pfastorage" {
 resource "azurerm_storage_container" "scriptscontainer" {
   name                  = "scripts"
   storage_account_name  = azurerm_storage_account.pfastorage.name
-  container_access_type = "public"
+  container_access_type = "blob"
 }
 locals {
   file_path = "../install_python3.ps1"
