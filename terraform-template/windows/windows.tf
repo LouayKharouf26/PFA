@@ -175,7 +175,7 @@ resource "azurerm_windows_virtual_machine" "windows-virtual-machine" {
 }
 resource "azurerm_virtual_machine_extension" "install-python-openssh" {
   name                 = "CustomScriptExtension"
-  virtual_machine_id   = azurerm_windows_virtual_machine.windows-server-virtual-machine.id
+  virtual_machine_id   = azurerm_windows_virtual_machine.windows-virtual-machine.id
   publisher            = "Microsoft.Compute"
   type                 = "CustomScriptExtension"
   type_handler_version = "1.10"
