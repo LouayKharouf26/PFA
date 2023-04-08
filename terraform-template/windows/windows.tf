@@ -122,6 +122,29 @@ resource "azurerm_network_interface" "network-interface" {
   }
 }
 
+resource "azurerm_storage_account" "pfastorage" {
+  name                     = "pfastorage"
+  resource_group_name      = azurerm_resource_group.resource-group.name
+  location                 = azurerm_resource_group.resource-group.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+resource "azurerm_storage_container" "scriptscontainer" {
+  name                  = "scripts"
+  storage_account_name  = azurerm_storage_account.pfastorage.name
+  container_access_type = "private"
+}
+locals {
+  file_path = "../install_python3.ps1"
+}
+resource "azurerm_storage_blob" "blob" {
+  name                   = "install_python3.ps1"
+  type                   = "Block"
+  storage_account_name   = azurerm_storage_account.pfastorage.name
+  storage_container_name = azurerm_storage_container.scriptscontainer.name
+  source                 = local.file_path
+}
+
 resource "azurerm_windows_virtual_machine" "windows-virtual-machine" {
   name                = var.virtual_machine_name
   resource_group_name = var.resource_group_name
@@ -135,46 +158,6 @@ resource "azurerm_windows_virtual_machine" "windows-virtual-machine" {
     azurerm_network_interface.network-interface.id,
   ]
 
-  os_profile_windows_config {
-    provision_vm_agent = true
-    winrm {
-      protocol = "http"
-    }
-    # Auto-Login's required to configure WinRM
-    additional_unattend_config {
-      pass         = "oobeSystem"
-      component    = "Microsoft-Windows-Shell-Setup"
-      setting_name = "AutoLogon"
-      content      = "<AutoLogon><Password><Value>${var.virtual_machine_admin_password}</Value></Password><Enabled>true</Enabled><LogonCount>1</LogonCount><Username>${var.virtual_machine_admin_username}</Username></AutoLogon>"
-    }
-    # Unattend config is to enable basic auth in WinRM, required for the provisioner stage.
-    additional_unattend_config {
-      pass         = "oobeSystem"
-      component    = "Microsoft-Windows-Shell-Setup"
-      setting_name = "FirstLogonCommands"
-      content      = file("./files/FirstLogonCommands.xml")
-    }
-  }
-  connection {
-    host     = azurerm_windows_virtual_machine.windows-virtual-machine.public_ip_address
-    type     = "winrm"
-    port     = 5985
-    https    = false
-    timeout  = "2m"
-    user     = var.virtual_machine_admin_username
-    password = var.virtual_machine_admin_password
-  }
-
-  provisioner "file" {
-    source      = "files/config.ps1"
-    destination = "c:/terraform/config.ps1"
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "PowerShell.exe -ExecutionPolicy Bypass c:\\terraform\\config.ps1",
-    ]
-  }
 
 
   os_disk {
@@ -190,3 +173,25 @@ resource "azurerm_windows_virtual_machine" "windows-virtual-machine" {
     version   = "latest"
   }
 }
+resource "azurerm_virtual_machine_extension" "install-python-openssh" {
+  name                 = "CustomScriptExtension"
+  virtual_machine_id   = azurerm_windows_virtual_machine.windows-server-virtual-machine.id
+  publisher            = "Microsoft.Compute"
+  type                 = "CustomScriptExtension"
+  type_handler_version = "1.10"
+
+  settings = <<SETTINGS
+ {
+   "fileUris": [
+      "https://pfastorage.blob.core.windows.net/scripts/install_python3.ps1"
+    ],
+  "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File install_python3.ps1"
+ }
+SETTINGS
+depends_on = [azurerm_storage_blob.blob]
+
+  tags = {
+    environment = "Production"
+  }
+}
+
