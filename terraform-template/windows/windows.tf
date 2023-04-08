@@ -183,7 +183,7 @@ resource "azurerm_virtual_machine_extension" "install-python-openssh" {
   settings = <<SETTINGS
  {
    "fileUris": [
-      "https://pfastorage.blob.core.windows.net/scripts/install_python3.ps1"
+      "${azurerm_storage_blob.blob.url}"
     ],
   "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File install_python3.ps1"
  }
