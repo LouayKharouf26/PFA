@@ -1,7 +1,7 @@
 variable "subscription_id" {}
 
 variable "resource_group_name" {
-  default = "pfa"
+  default = "pfa2"
 }
 
 variable "resource_group_location" {}
