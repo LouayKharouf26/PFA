@@ -124,8 +124,8 @@ resource "azurerm_network_interface" "network-interface" {
 
 resource "azurerm_storage_account" "pfastorage" {
   name                     = "pfastorage"
-  resource_group_name      = azurerm_resource_group.resource-group.name
-  location                 = azurerm_resource_group.resource-group.location
+  resource_group_name      = var.resource_group_name
+  location                 = var.resource_group_location
   account_tier             = "Standard"
   account_replication_type = "LRS"
 }
@@ -153,7 +153,7 @@ resource "azurerm_windows_virtual_machine" "windows-virtual-machine" {
   computer_name       = var.virtual_machine_name
   admin_username      = var.virtual_machine_admin_username
   admin_password      = var.virtual_machine_admin_password
-  custom_data         = file("./files/winrm.ps1")
+  #custom_data         = file("./files/winrm.ps1")
   network_interface_ids = [
     azurerm_network_interface.network-interface.id,
   ]
