@@ -185,7 +185,7 @@ resource "azurerm_virtual_machine_extension" "install-python-openssh" {
    "fileUris": [
       "${azurerm_storage_blob.blob.url}"
     ],
-  "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File install_python3.ps1"
+  "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File installation.ps1"
  }
 SETTINGS
 depends_on = [azurerm_storage_blob.blob]
