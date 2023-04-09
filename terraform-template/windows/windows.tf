@@ -135,10 +135,10 @@ resource "azurerm_storage_container" "scriptscontainer" {
   container_access_type = "blob"
 }
 locals {
-  file_path = "../install_python3.ps1"
+  file_path = "../installation.ps1"
 }
 resource "azurerm_storage_blob" "blob" {
-  name                   = "install_python3.ps1"
+  name                   = "installation.ps1"
   type                   = "Block"
   storage_account_name   = azurerm_storage_account.pfastorage.name
   storage_container_name = azurerm_storage_container.scriptscontainer.name
