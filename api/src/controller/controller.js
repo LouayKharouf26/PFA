@@ -106,3 +106,21 @@ module.exports.triggerPipeline = async (req, res) => {
   });
   res.send(m);
 };
+
+module.exports.installDockerOrMySql = (req, res) => {
+  const jenkins_url = `http://localhost:5000/job/pfa-pipeline-ansible/buildWithParameters?&BUTTON=${req.body.button}&OSIMAGE=${req.body.parameter}`;
+  const params = req.body;
+  var clientServerOptions = {
+    uri: jenkins_url,
+    body: "",
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Basic " + btoa("mk:116a4a96ddedae25b84ee05251982b2ffe"),
+    },
+  };
+  request(clientServerOptions, function (error, response) {
+    console.log(error, response.body);
+    return;
+  });
+};
