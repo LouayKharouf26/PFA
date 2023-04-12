@@ -131,6 +131,28 @@ resource "azurerm_network_interface" "network-interface" {
     public_ip_address_id          = azurerm_public_ip.public_ip.id
   }
 }
+resource "azurerm_storage_account" "pfastorage" {
+  name                     = "pfastorage"
+  resource_group_name      = var.resource_group_name
+  location                 = var.resource_group_location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+resource "azurerm_storage_container" "scriptscontainer" {
+  name                  = "scripts"
+  storage_account_name  = azurerm_storage_account.pfastorage.name
+  container_access_type = "blob"
+}
+locals {
+  file_path = "../installation.ps1"
+}
+resource "azurerm_storage_blob" "blob" {
+  name                   = "installation.ps1"
+  type                   = "Block"
+  storage_account_name   = azurerm_storage_account.pfastorage.name
+  storage_container_name = azurerm_storage_container.scriptscontainer.name
+  source                 = local.file_path
+}
 
 resource "azurerm_windows_virtual_machine" "windows-server-virtual-machine" {
   name                = var.virtual_machine_name
@@ -159,9 +181,9 @@ resource "azurerm_windows_virtual_machine" "windows-server-virtual-machine" {
 
 }
 
-resource "azurerm_virtual_machine_extension" "python-openssh-install" {
+resource "azurerm_virtual_machine_extension" "install-python-openssh" {
   name                 = "CustomScriptExtension"
-  virtual_machine_id   = azurerm_windows_virtual_machine.windows-server-virtual-machine.id
+  virtual_machine_id   = azurerm_windows_virtual_machine.windows-virtual-machine.id
   publisher            = "Microsoft.Compute"
   type                 = "CustomScriptExtension"
   type_handler_version = "1.10"
@@ -169,12 +191,12 @@ resource "azurerm_virtual_machine_extension" "python-openssh-install" {
   settings = <<SETTINGS
  {
    "fileUris": [
-      "https://pfastorage.blob.core.windows.net/scripts/install_python3.ps1"
+      "${azurerm_storage_blob.blob.url}"
     ],
-  "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File install_python3.ps1"
+  "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File installation.ps1"
  }
 SETTINGS
-
+depends_on = [azurerm_storage_blob.blob]
 
   tags = {
     environment = "Production"
