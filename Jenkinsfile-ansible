@@ -16,7 +16,8 @@ pipeline{
             steps{
                 script {
             echo "Update hosts "
-            sh "ansible-playbook update-hosts.yaml --extra-vars='@terraform.tfvars.json'"
+            dir("ansible"){
+            sh "ansible-playbook update-hosts.yaml --extra-vars='@../terraform-template/terraform.tfvars.json'"
             sh "ansible-playbook -i hosts ping.yaml"
             if (params.OSIMAGE== 'linux') {
                 dir ("ansible/linux") {
@@ -53,6 +54,6 @@ pipeline{
                 }                    
             }               
         }
-    }}}
+    }}}}
 
 }
