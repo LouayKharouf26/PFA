@@ -1,0 +1,15 @@
+---
+- name: install mysql
+  hosts: vm
+  become: true
+  vars:
+    ansible_ssh_extra_args: "-o StrictHostKeyChecking=no"
+  tasks: 
+  - name: install mysql-client
+    apt: 
+     name: mysql-client-core-8.0
+     state: latest 
+  - name: install mysql-server
+    apt: 
+     name: mysql-server
+     state: latest 
