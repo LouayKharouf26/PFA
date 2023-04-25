@@ -20,7 +20,7 @@ pipeline{
             sh "ansible-playbook update-hosts.yml --extra-vars='@../terraform-template/terraform.tfvars.json'"
             //sh "ansible-playbook -i hosts ping.yaml"}
             if (params.OSIMAGE== 'linux') {
-                dir ("ansible/linux") {
+                dir ("linux") {
                     if (params.BUTTON=='mysql') {
                         // playbook to install mysql
                         sh "ansible-playbook -i hosts install_mysql.yaml"
@@ -31,7 +31,7 @@ pipeline{
                     }
                 }
             } else if (params.OSIMAGE == 'windows'){
-                dir ("ansible/windows") {
+                dir ("windows") {
                     if (params.BUTTON=='mysql') {
                         // playbook to install mysql
                         sh "ansible-playbook -i hosts install_mysql.yml"
@@ -42,7 +42,7 @@ pipeline{
                     }
                 }
             } else {
-                dir ("ansible/win_server") {
+                dir ("win_server") {
                     if (params.BUTTON=='mysql') {
                         // playbook to install mysql 
                         sh "ansible-playbook -i hosts install_mysql.yml"
