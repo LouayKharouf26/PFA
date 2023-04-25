@@ -18,7 +18,7 @@ pipeline{
             sh "ansible-playbook -i hosts ping.yaml"
             if (params.OSIMAGE== 'linux') {
                 dir ("ansible/linux") {
-                    if (params.BUTTON='mysql') {
+                    if (params.BUTTON=='mysql') {
                         // playbook to install mysql
                         sh "ansible-playbook -i hosts install_mysql.yaml"
                     }
@@ -29,7 +29,7 @@ pipeline{
                 }
             } else if (params.OSIMAGE == 'windows'){
                 dir ("ansible/windows") {
-                    if (params.BUTTON='mysql') {
+                    if (params.BUTTON=='mysql') {
                         // playbook to install mysql
                         sh "ansible-playbook -i hosts install_mysql.yml"
                     }
@@ -40,7 +40,7 @@ pipeline{
                 }
             } else {
                 dir ("ansible/win_server") {
-                    if (params.BUTTON='mysql') {
+                    if (params.BUTTON=='mysql') {
                         // playbook to install mysql 
                         sh "ansible-playbook -i hosts install_mysql.yml"
                     }
