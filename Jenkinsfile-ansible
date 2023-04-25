@@ -14,6 +14,7 @@ pipeline{
         }
         stage ("applying selected playbook button"){
             steps{
+                script {
             echo "Update hosts "
             sh "ansible-playbook update-hosts.yaml --extra-vars='@terraform.tfvars.json'"
             sh "ansible-playbook -i hosts ping.yaml"
@@ -52,6 +53,6 @@ pipeline{
                 }                    
             }               
         }
-    }}
+    }}}
 
 }
