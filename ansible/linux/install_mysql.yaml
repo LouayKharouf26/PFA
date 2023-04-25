@@ -5,6 +5,9 @@
   vars:
     ansible_ssh_extra_args: "-o StrictHostKeyChecking=no"
   tasks: 
+  - name: Update APT cache
+    apt:
+      update_cache: yes
   - name: install mysql-client
     apt: 
      name: mysql-client-core-8.0
