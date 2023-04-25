@@ -23,7 +23,7 @@ pipeline{
                 dir ("linux") {
                     if (params.BUTTON=='mysql') {
                         // playbook to install mysql
-                        sh "ansible-playbook -i ./hosts install_mysql.yaml"
+                        sh "ansible-playbook -i ../hosts install_mysql.yaml"
                     }
                     else {
                         // playbook to install docker 
