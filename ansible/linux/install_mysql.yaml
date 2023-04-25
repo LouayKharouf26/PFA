@@ -10,7 +10,7 @@
       update_cache: yes
   - name: install mysql-client
     apt: 
-     name: mysql-client-core-8.0
+     name: mysql-client
      state: latest 
   - name: install mysql-server
     apt: 
