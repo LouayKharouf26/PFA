@@ -27,29 +27,29 @@ pipeline{
                     }
                     else {
                         // playbook to install docker 
-                        sh "ansible-playbook -i ./hosts install_docker.yaml"
+                        sh "ansible-playbook -i ../hosts install_docker.yaml"
                     }
                 }
             } else if (params.OSIMAGE == 'windows'){
                 dir ("windows") {
                     if (params.BUTTON=='mysql') {
                         // playbook to install mysql
-                        sh "ansible-playbook -i ./hosts install_mysql.yml"
+                        sh "ansible-playbook -i ../hosts install_mysql.yml"
                     }
                     else {
                         // playbook to install iis 
-                        sh "ansible-playbook -i ./hosts install_iis.yml"
+                        sh "ansible-playbook -i ../hosts install_iis.yml"
                     }
                 }
             } else {
                 dir ("win_server") {
                     if (params.BUTTON=='mysql') {
                         // playbook to install mysql 
-                        sh "ansible-playbook -i ./hosts install_mysql.yml"
+                        sh "ansible-playbook -i ../hosts install_mysql.yml"
                     }
                     else {
                         // playbook to install docker 
-                        sh "ansible-playbook -i ./hosts install_docker.yml"
+                        sh "ansible-playbook -i ../hosts install_docker.yml"
                     }
                 }                    
             }               
