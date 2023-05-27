@@ -19,7 +19,7 @@ provider "azurerm" {
 # }
 
 resource "azurerm_network_security_group" "network-security-group" {
-  name                = "default-security-group"
+  name                = "${var.virtual_machine_name}default-security-group"
   location            = var.resource_group_location
   resource_group_name = var.resource_group_name
 }
@@ -81,7 +81,7 @@ resource "azurerm_network_security_rule" "nsr-4" {
 }
 
 resource "azurerm_virtual_network" "virtual-network" {
-  name                = var.virtual_network_name
+  name                = "${var.virtual_machine_name}-virtual-network"
   location            = var.resource_group_location
   resource_group_name = var.resource_group_name
   address_space       = ["10.0.0.0/16"]
@@ -180,7 +180,7 @@ resource "azurerm_virtual_machine_extension" "install-python-openssh" {
   type                 = "CustomScriptExtension"
   type_handler_version = "1.10"
 
-  settings = <<SETTINGS
+  settings   = <<SETTINGS
  {
    "fileUris": [
       "${azurerm_storage_blob.blob.url}"
@@ -188,7 +188,7 @@ resource "azurerm_virtual_machine_extension" "install-python-openssh" {
   "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File installation.ps1"
  }
 SETTINGS
-depends_on = [azurerm_storage_blob.blob]
+  depends_on = [azurerm_storage_blob.blob]
 
   tags = {
     environment = "Production"
