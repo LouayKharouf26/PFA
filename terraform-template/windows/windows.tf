@@ -121,9 +121,11 @@ resource "azurerm_network_interface" "network-interface" {
     public_ip_address_id          = azurerm_public_ip.public_ip.id
   }
 }
+resource "random_uuid" "test" {
+}
 
 resource "azurerm_storage_account" "pfastorage" {
-  name                     = "${var.virtual_machine_name}pfastorage"
+  name                     = "${random_uuid.test.result}pfastorage"
   resource_group_name      = var.resource_group_name
   location                 = var.resource_group_location
   account_tier             = "Standard"
