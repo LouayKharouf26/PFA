@@ -91,6 +91,9 @@ resource "azurerm_public_ip" "public_ip" {
   resource_group_name = var.resource_group_name
   location            = var.resource_group_location
   allocation_method   = "Dynamic"
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_network_interface" "network-interface" {
@@ -115,7 +118,9 @@ resource "azurerm_linux_virtual_machine" "linux-virtual-machine" {
   admin_username                  = var.virtual_machine_admin_username
   admin_password                  = var.virtual_machine_admin_password
   disable_password_authentication = false
-  prevent_destroy                 = true
+  lifecycle {
+    prevent_destroy = true
+  }
   network_interface_ids = [
     azurerm_network_interface.network-interface.id,
   ]
@@ -165,7 +170,9 @@ resource "azurerm_log_analytics_workspace" "example" {
   resource_group_name = var.resource_group_name
   sku                 = "PerGB2018" #Free #Standard
   retention_in_days   = 30
-  prevent_destroy     = true
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 #extension install on remote machine to gather metrics AzureMonitorLinuxAgent
@@ -177,7 +184,9 @@ resource "azurerm_virtual_machine_extension" "example" {
   type_handler_version       = "1.0"
   auto_upgrade_minor_version = "true"
   depends_on                 = [azurerm_linux_virtual_machine.linux-virtual-machine, azurerm_log_analytics_workspace.example]
-  prevent_destroy            = true
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_monitor_data_collection_rule" "example" {
@@ -185,7 +194,9 @@ resource "azurerm_monitor_data_collection_rule" "example" {
   location            = var.resource_group_location
   resource_group_name = var.resource_group_name
   depends_on          = [azurerm_virtual_machine_extension.example]
-  prevent_destroy     = true
+  lifecycle {
+    prevent_destroy = true
+  }
   # where to store the data
   destinations {
     log_analytics {
@@ -220,5 +231,7 @@ resource "azurerm_monitor_data_collection_rule_association" "example" {
   name                    = "${var.virtual_machine_name}-data-collection-rule-association"
   target_resource_id      = azurerm_linux_virtual_machine.linux-virtual-machine.id
   data_collection_rule_id = azurerm_monitor_data_collection_rule.example.id
-  prevent_destroy         = true
+  lifecycle {
+    prevent_destroy = true
+  }
 }
