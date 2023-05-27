@@ -17,7 +17,7 @@ pipeline{
         //         sh "az login"
         //     }
         // }
-
+        
        stage("Setting up infra") {
             steps {                
                 script {

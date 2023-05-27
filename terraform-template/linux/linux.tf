@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~>3.0.0"
+      version = "3.54.0"
     }
   }
   required_version = ">= 0.14.9"
@@ -105,6 +105,7 @@ resource "azurerm_network_interface" "network-interface" {
   }
 }
 
+
 resource "azurerm_linux_virtual_machine" "linux-virtual-machine" {
   name                            = var.virtual_machine_name
   resource_group_name             = var.resource_group_name
@@ -150,4 +151,68 @@ resource "azurerm_linux_virtual_machine" "linux-virtual-machine" {
     sku       = var.virtual_machine_sku #"18.04-LTS"    # or "16.04 20.04 22.04LTS"  "7-LVM"
     version   = "latest"
   }
+}
+
+//random data source goes here 
+
+// workspace 
+resource "azurerm_log_analytics_workspace" "example" {
+  name                = "${var.virtual_machine_name}-log-analytics-workspace"
+  location            = var.resource_group_location
+  resource_group_name = var.resource_group_name
+  sku                 = "PerGB2018" #Free #Standard
+  retention_in_days   = 30
+}
+
+resource "azurerm_virtual_machine_extension" "example" {
+  name                       = "${var.virtual_machine_name}-ama"
+  virtual_machine_id         = azurerm_linux_virtual_machine.linux-virtual-machine.id
+  publisher                  = "Microsoft.Azure.Monitor"
+  type                       = "AzureMonitorLinuxAgent"
+  type_handler_version       = "1.0"
+  auto_upgrade_minor_version = "true"
+  depends_on                 = [azurerm_linux_virtual_machine.linux-virtual-machine, azurerm_log_analytics_workspace.example]
+
+}
+
+resource "azurerm_monitor_data_collection_rule" "example" {
+  name                = "${var.virtual_machine_name}-data-collection-rule"
+  location            = var.resource_group_location
+  resource_group_name = var.resource_group_name
+  depends_on          = [azurerm_virtual_machine_extension.example]
+
+  # where to store the data
+  destinations {
+    log_analytics {
+      workspace_resource_id = azurerm_log_analytics_workspace.example.id
+      name                  = "${var.virtual_machine_name}-test-destination-log"
+    }
+    azure_monitor_metrics {
+      name = "${var.virtual_machine_name}-test-destination-metrics"
+    }
+  }
+
+  #how to collect the data 
+  data_flow {
+    streams      = ["Microsoft-InsightsMetrics"]
+    destinations = ["${var.virtual_machine_name}-test-destination-log"]
+  }
+
+  # where to get the data
+  data_sources {
+    performance_counter {
+      streams                       = ["Microsoft-InsightsMetrics"]
+      sampling_frequency_in_seconds = 60
+      counter_specifiers            = ["\\VmInsights\\DetailedMetrics"]
+      name                          = "${var.virtual_machine_name}-VMInsightsPerfCounters"
+    }
+  }
+}
+
+# data collection rule association
+
+resource "azurerm_monitor_data_collection_rule_association" "example" {
+  name                    = "${var.virtual_machine_name}-data-collection-rule-association"
+  target_resource_id      = azurerm_linux_virtual_machine.linux-virtual-machine.id
+  data_collection_rule_id = azurerm_monitor_data_collection_rule.example.id
 }
