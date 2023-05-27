@@ -31,6 +31,7 @@ pipeline{
                                 echo "terraform init"
                                 sh "terraform init -upgrade"
                                 //sh "terraform apply --auto-approve --var-file=/var/jenkins_home/workspace/test/terraform-template/terraform.tfvars.json"
+                                // badel esm el pipeline houni 
                                 sh "terraform apply --auto-approve --var-file=/var/jenkins_home/workspace/pfa-pipeline/terraform-template/terraform.tfvars.json"
                             }
                         } else if (params.OSIMAGE == 'windows'){

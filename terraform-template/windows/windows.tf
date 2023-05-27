@@ -123,7 +123,7 @@ resource "azurerm_network_interface" "network-interface" {
 }
 
 resource "azurerm_storage_account" "pfastorage" {
-  name                     = "${var.virtual_machine_name}-pfastorage"
+  name                     = "${var.virtual_machine_name}pfastorage"
   resource_group_name      = var.resource_group_name
   location                 = var.resource_group_location
   account_tier             = "Standard"
