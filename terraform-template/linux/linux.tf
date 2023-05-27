@@ -91,6 +91,7 @@ resource "azurerm_public_ip" "public_ip" {
   resource_group_name = var.resource_group_name
   location            = var.resource_group_location
   allocation_method   = "Dynamic"
+  prevent_destroy     = true
 }
 
 resource "azurerm_network_interface" "network-interface" {
@@ -105,7 +106,7 @@ resource "azurerm_network_interface" "network-interface" {
   }
 }
 
-
+#virtual machine name and settings 
 resource "azurerm_linux_virtual_machine" "linux-virtual-machine" {
   name                            = var.virtual_machine_name
   resource_group_name             = var.resource_group_name
@@ -115,6 +116,7 @@ resource "azurerm_linux_virtual_machine" "linux-virtual-machine" {
   admin_username                  = var.virtual_machine_admin_username
   admin_password                  = var.virtual_machine_admin_password
   disable_password_authentication = false
+  prevent_destroy                 = true
   network_interface_ids = [
     azurerm_network_interface.network-interface.id,
   ]
@@ -130,6 +132,8 @@ resource "azurerm_linux_virtual_machine" "linux-virtual-machine" {
     host     = azurerm_linux_virtual_machine.linux-virtual-machine.public_ip_address
 
   }
+
+  #install python on remote machine through script
   provisioner "remote-exec" {
     inline = [
       "echo ${var.virtual_machine_admin_password} | sudo -S apt update",
@@ -162,8 +166,10 @@ resource "azurerm_log_analytics_workspace" "example" {
   resource_group_name = var.resource_group_name
   sku                 = "PerGB2018" #Free #Standard
   retention_in_days   = 30
+  prevent_destroy     = true
 }
 
+#extension install on remote machine to gather metrics AzureMonitorLinuxAgent
 resource "azurerm_virtual_machine_extension" "example" {
   name                       = "${var.virtual_machine_name}-ama"
   virtual_machine_id         = azurerm_linux_virtual_machine.linux-virtual-machine.id
@@ -172,7 +178,7 @@ resource "azurerm_virtual_machine_extension" "example" {
   type_handler_version       = "1.0"
   auto_upgrade_minor_version = "true"
   depends_on                 = [azurerm_linux_virtual_machine.linux-virtual-machine, azurerm_log_analytics_workspace.example]
-
+  prevent_destroy            = true
 }
 
 resource "azurerm_monitor_data_collection_rule" "example" {
@@ -180,7 +186,7 @@ resource "azurerm_monitor_data_collection_rule" "example" {
   location            = var.resource_group_location
   resource_group_name = var.resource_group_name
   depends_on          = [azurerm_virtual_machine_extension.example]
-
+  prevent_destroy     = true
   # where to store the data
   destinations {
     log_analytics {
@@ -215,4 +221,5 @@ resource "azurerm_monitor_data_collection_rule_association" "example" {
   name                    = "${var.virtual_machine_name}-data-collection-rule-association"
   target_resource_id      = azurerm_linux_virtual_machine.linux-virtual-machine.id
   data_collection_rule_id = azurerm_monitor_data_collection_rule.example.id
+  prevent_destroy         = true
 }
