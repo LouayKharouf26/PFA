@@ -13,15 +13,15 @@ provider "azurerm" {
   subscription_id = var.subscription_id
 }
 
-# resource "azurerm_resource_group" "resource-group" {
-#   name     = "pfa"
-#   location = var.resource_group_location
-# }
+resource "azurerm_resource_group" "resource-group" {
+  name     = "${var.virtual_machine_name}-resource-group"
+  location = var.resource_group_location
+}
 
 resource "azurerm_network_security_group" "network-security-group" {
   name                = "default-security-group"
   location            = var.resource_group_location
-  resource_group_name = var.resource_group_name
+  resource_group_name = azurerm_resource_group.resource-group.name
 }
 
 resource "azurerm_network_security_rule" "nsr-1" {
@@ -34,7 +34,7 @@ resource "azurerm_network_security_rule" "nsr-1" {
   destination_port_range      = "22"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = var.resource_group_name
+  resource_group_name         = azurerm_resource_group.resource-group.name
   network_security_group_name = azurerm_network_security_group.network-security-group.name
 }
 
@@ -48,7 +48,7 @@ resource "azurerm_network_security_rule" "nsr-2" {
   destination_port_range      = "*"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = var.resource_group_name
+  resource_group_name         = azurerm_resource_group.resource-group.name
   network_security_group_name = azurerm_network_security_group.network-security-group.name
 }
 
@@ -62,7 +62,7 @@ resource "azurerm_network_security_rule" "nsr-3" {
   destination_port_range      = "*"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = var.resource_group_name
+  resource_group_name         = azurerm_resource_group.resource-group.name
   network_security_group_name = azurerm_network_security_group.network-security-group.name
 }
 
@@ -70,13 +70,13 @@ resource "azurerm_network_security_rule" "nsr-3" {
 resource "azurerm_virtual_network" "virtual-network" {
   name                = var.virtual_network_name
   location            = var.resource_group_location
-  resource_group_name = var.resource_group_name
+  resource_group_name = azurerm_resource_group.resource-group.name
   address_space       = ["10.0.0.0/16"]
 }
 
 resource "azurerm_subnet" "subnet" {
   name                 = var.subnet_name
-  resource_group_name  = var.resource_group_name
+  resource_group_name  = azurerm_resource_group.resource-group.name
   virtual_network_name = azurerm_virtual_network.virtual-network.name
   address_prefixes     = ["10.0.1.0/24"]
 }
@@ -88,7 +88,7 @@ resource "azurerm_subnet_network_security_group_association" "name" {
 
 resource "azurerm_public_ip" "public_ip" {
   name                = "${var.virtual_machine_name}-public-ip"
-  resource_group_name = var.resource_group_name
+  resource_group_name = azurerm_resource_group.resource-group.name
   location            = var.resource_group_location
   allocation_method   = "Dynamic"
 }
@@ -96,7 +96,7 @@ resource "azurerm_public_ip" "public_ip" {
 resource "azurerm_network_interface" "network-interface" {
   name                = "${var.virtual_machine_name}-nic"
   location            = var.resource_group_location
-  resource_group_name = var.resource_group_name
+  resource_group_name = azurerm_resource_group.resource-group.name
   ip_configuration {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.subnet.id
@@ -108,7 +108,7 @@ resource "azurerm_network_interface" "network-interface" {
 #virtual machine name and settings 
 resource "azurerm_linux_virtual_machine" "linux-virtual-machine" {
   name                            = var.virtual_machine_name
-  resource_group_name             = var.resource_group_name
+  resource_group_name             = azurerm_resource_group.resource-group.name
   location                        = var.resource_group_location
   size                            = var.virtual_machine_size #Standard_B2s Standard_F2s Standard_D2s
   computer_name                   = var.virtual_machine_name
@@ -118,11 +118,6 @@ resource "azurerm_linux_virtual_machine" "linux-virtual-machine" {
   network_interface_ids = [
     azurerm_network_interface.network-interface.id,
   ]
-
-  # output "public-ip" {
-  #   value = azurerm_linux_virtual_machine.linux-virtual-machine.public_ip_address
-  # }
-
   connection {
     type     = "ssh"
     user     = var.virtual_machine_admin_username
@@ -137,7 +132,6 @@ resource "azurerm_linux_virtual_machine" "linux-virtual-machine" {
       "echo ${var.virtual_machine_admin_password} | sudo -S apt update",
       "echo ${var.virtual_machine_admin_password} | sudo -S apt install python3 -y",
       "python3 --version"
-      # "echo ${var.virtual_machine_admin_password} && curl -sL https://aka.ms/InstallAzureCLIDeb | sudo -S bash",
     ]
   }
   os_disk {
@@ -161,7 +155,7 @@ resource "azurerm_linux_virtual_machine" "linux-virtual-machine" {
 resource "azurerm_log_analytics_workspace" "example" {
   name                = "${var.virtual_machine_name}-log-analytics-workspace"
   location            = var.resource_group_location
-  resource_group_name = var.resource_group_name
+  resource_group_name = azurerm_resource_group.resource-group.name
   sku                 = "PerGB2018" #Free #Standard
   retention_in_days   = 30
 }
@@ -177,10 +171,12 @@ resource "azurerm_virtual_machine_extension" "example" {
   depends_on                 = [azurerm_linux_virtual_machine.linux-virtual-machine, azurerm_log_analytics_workspace.example]
 }
 
+
+#data collection rule to extract data and send it to azure workspace analytics
 resource "azurerm_monitor_data_collection_rule" "example" {
   name                = "${var.virtual_machine_name}-data-collection-rule"
   location            = var.resource_group_location
-  resource_group_name = var.resource_group_name
+  resource_group_name = azurerm_resource_group.resource-group.name
   depends_on          = [azurerm_virtual_machine_extension.example]
   # where to store the data
   destinations {
