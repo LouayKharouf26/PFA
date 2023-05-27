@@ -14,7 +14,7 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "resource-group" {
-  name     = "${var.virtual_machine_name}resource_group"
+  name     = "${var.virtual_machine_name}-resource-group"
   location = var.resource_group_location
 }
 
