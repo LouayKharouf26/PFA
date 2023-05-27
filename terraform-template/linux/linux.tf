@@ -91,7 +91,6 @@ resource "azurerm_public_ip" "public_ip" {
   resource_group_name = var.resource_group_name
   location            = var.resource_group_location
   allocation_method   = "Dynamic"
-  prevent_destroy     = true
 }
 
 resource "azurerm_network_interface" "network-interface" {
