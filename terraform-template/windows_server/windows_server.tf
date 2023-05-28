@@ -216,5 +216,67 @@ SETTINGS
   }
 }
 
+# monitoring 
 
-#monitoring 
+// workspace 
+resource "azurerm_log_analytics_workspace" "example" {
+  name                = "${var.virtual_machine_name}-log-analytics-workspace"
+  location            = var.resource_group_location
+  resource_group_name = azurerm_resource_group.resource-group.name
+  sku                 = "PerGB2018" #Free #Standard
+  retention_in_days   = 30
+}
+
+#extension install on remote machine to gather metrics AzureMonitorLinuxAgent
+resource "azurerm_virtual_machine_extension" "example" {
+  name                       = "${var.virtual_machine_name}-ama"
+  virtual_machine_id         = azurerm_windows_virtual_machine.windows-virtual-machine.id
+  publisher                  = "Microsoft.Azure.Monitor"
+  type                       = "AzureMonitorWindowsAgent"
+  type_handler_version       = "1.0"
+  auto_upgrade_minor_version = "true"
+  depends_on                 = [azurerm_windows_virtual_machine.windows-virtual-machine, azurerm_log_analytics_workspace.example]
+}
+
+
+#data collection rule to extract data and send it to azure workspace analytics
+resource "azurerm_monitor_data_collection_rule" "example" {
+  name                = "${var.virtual_machine_name}-data-collection-rule"
+  location            = var.resource_group_location
+  resource_group_name = azurerm_resource_group.resource-group.name
+  depends_on          = [azurerm_virtual_machine_extension.example]
+  # where to store the data
+  destinations {
+    log_analytics {
+      workspace_resource_id = azurerm_log_analytics_workspace.example.id
+      name                  = "${var.virtual_machine_name}-test-destination-log"
+    }
+    azure_monitor_metrics {
+      name = "${var.virtual_machine_name}-test-destination-metrics"
+    }
+  }
+
+  #how to collect the data 
+  data_flow {
+    streams      = ["Microsoft-InsightsMetrics"]
+    destinations = ["${var.virtual_machine_name}-test-destination-log"]
+  }
+
+  # where to get the data
+  data_sources {
+    performance_counter {
+      streams                       = ["Microsoft-InsightsMetrics"]
+      sampling_frequency_in_seconds = 60
+      counter_specifiers            = ["\\VmInsights\\DetailedMetrics"]
+      name                          = "${var.virtual_machine_name}-VMInsightsPerfCounters"
+    }
+  }
+}
+
+# data collection rule association
+
+resource "azurerm_monitor_data_collection_rule_association" "example" {
+  name                    = "${var.virtual_machine_name}-data-collection-rule-association"
+  target_resource_id      = azurerm_windows_virtual_machine.windows-virtual-machine.id
+  data_collection_rule_id = azurerm_monitor_data_collection_rule.example.id
+}
