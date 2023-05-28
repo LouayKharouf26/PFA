@@ -1,8 +1,8 @@
 pipeline{
     agent any
     parameters {
-        choice(name: 'BUTTON', choices: ['mysql', 'docker'], description: 'Select installation button')
-        choice(name: 'OSIMAGE', choices: ['linux', 'windows', 'windows_server'], description: 'Select OS image')
+        choice(name: 'BUTTON', choices: ['Mysql', 'Docker'], description: 'Select installation button')
+        choice(name: 'OSIMAGE', choices: ['Linux', 'windows', 'windows_server'], description: 'Select OS image')
     }
     stages{
          stage("getting code") {
