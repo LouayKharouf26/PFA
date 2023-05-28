@@ -235,7 +235,7 @@ resource "azurerm_virtual_machine_extension" "example" {
   type                       = "AzureMonitorWindowsAgent"
   type_handler_version       = "1.0"
   auto_upgrade_minor_version = "true"
-  depends_on                 = [azurerm_windows_virtual_machine.windows-virtual-machine, azurerm_log_analytics_workspace.example]
+  depends_on                 = [azurerm_windows_virtual_machine.windows-server-virtual-machine, azurerm_log_analytics_workspace.example]
 }
 
 
