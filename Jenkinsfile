@@ -39,7 +39,7 @@ pipeline{
                                 sh "pwd"
                                 sh "ls"
                                 echo "terraform init"
-                                sh "terraform init"
+                                sh "terraform init -upgrade"
                                 sh "terraform apply --auto-approve --var-file=/var/jenkins_home/workspace/PFAPIPELINE/terraform-template/terraform.tfvars.json"
                                 //sh "terraform apply --auto-approve --var-file=../terraform.tfvars.json"
                             }
@@ -48,7 +48,7 @@ pipeline{
                                 sh "pwd"
                                 sh "ls"
                                 echo "terraform init"
-                                sh "terraform init"
+                                sh "terraform init -upgrade"
                                 sh "terraform apply --auto-approve --var-file=/var/jenkins_home/workspace/PFAPIPELINE/terraform-template/terraform.tfvars.json"
                                 //sh "terraform apply --auto-approve --var-file=../terraform.tfvars.json"
                             }                    
