@@ -277,6 +277,6 @@ resource "azurerm_monitor_data_collection_rule" "example" {
 
 resource "azurerm_monitor_data_collection_rule_association" "example" {
   name                    = "${var.virtual_machine_name}-data-collection-rule-association"
-  target_resource_id      = azurerm_windows_virtual_machine.azurerm_windows_virtual_machine.windows-server-virtual-machine.id
+  target_resource_id      = azurerm_windows_virtual_machine.windows-server-virtual-machine.id
   data_collection_rule_id = azurerm_monitor_data_collection_rule.example.id
 }
