@@ -32,7 +32,7 @@ pipeline{
                                 sh "terraform init -upgrade"
                                 //sh "terraform apply --auto-approve --var-file=/var/jenkins_home/workspace/test/terraform-template/terraform.tfvars.json"
                                 // badel esm el pipeline houni 
-                                sh "terraform apply --auto-approve --var-file=/var/jenkins_home/workspace/pfa-pipeline/terraform-template/terraform.tfvars.json"
+                                sh "terraform apply --auto-approve --var-file=/var/jenkins_home/workspace/PFAPIPELINE/terraform-template/terraform.tfvars.json"
                             }
                         } else if (params.OSIMAGE == 'windows'){
                             dir ("terraform-template/windows") {
@@ -40,7 +40,7 @@ pipeline{
                                 sh "ls"
                                 echo "terraform init"
                                 sh "terraform init"
-                                sh "terraform apply --auto-approve --var-file=/var/jenkins_home/workspace/pfa-pipeline/terraform-template/terraform.tfvars.json"
+                                sh "terraform apply --auto-approve --var-file=/var/jenkins_home/workspace/PFAPIPELINE/terraform-template/terraform.tfvars.json"
                                 //sh "terraform apply --auto-approve --var-file=../terraform.tfvars.json"
                             }
                         } else {
@@ -49,7 +49,7 @@ pipeline{
                                 sh "ls"
                                 echo "terraform init"
                                 sh "terraform init"
-                                sh "terraform apply --auto-approve --var-file=/var/jenkins_home/workspace/pfa-pipeline/terraform-template/terraform.tfvars.json"
+                                sh "terraform apply --auto-approve --var-file=/var/jenkins_home/workspace/PFAPIPELINE/terraform-template/terraform.tfvars.json"
                                 //sh "terraform apply --auto-approve --var-file=../terraform.tfvars.json"
                             }                    
                         }

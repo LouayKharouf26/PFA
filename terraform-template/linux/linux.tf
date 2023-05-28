@@ -149,6 +149,7 @@ resource "azurerm_linux_virtual_machine" "linux-virtual-machine" {
   }
 }
 
+#monitoring
 // workspace 
 resource "azurerm_log_analytics_workspace" "example" {
   name                = "${var.virtual_machine_name}-log-analytics-workspace"
