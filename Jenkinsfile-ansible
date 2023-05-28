@@ -2,7 +2,7 @@ pipeline{
     agent any
     parameters {
         choice(name: 'BUTTON', choices: ['Mysql', 'Docker'], description: 'Select installation button')
-        choice(name: 'OSIMAGE', choices: ['Linux', 'windows', 'windows_server'], description: 'Select OS image')
+        choice(name: 'OSIMAGE', choices: ['Linux', 'Windows', 'windows_server'], description: 'Select OS image')
     }
     stages{
          stage("getting code") {
@@ -21,7 +21,7 @@ pipeline{
             //sh "ansible-playbook -i hosts ping.yaml"}
             if (params.OSIMAGE== 'Linux') {
                 dir ("linux") {
-                    if (params.BUTTON=='mysql') {
+                    if (params.BUTTON=='Mysql') {
                         // playbook to install mysql
                         sh "ansible-playbook -i ../hosts install_mysql.yaml"
                     }
@@ -30,9 +30,9 @@ pipeline{
                         sh "ansible-playbook -i ../hosts install_docker.yaml"
                     }
                 }
-            } else if (params.OSIMAGE == 'windows'){
+            } else if (params.OSIMAGE == 'Windows'){
                 dir ("windows") {
-                    if (params.BUTTON=='mysql') {
+                    if (params.BUTTON=='Mysql') {
                         // playbook to install mysql
                         sh "ansible-playbook -i ../hosts install_mysql.yml"
                     }
@@ -43,7 +43,7 @@ pipeline{
                 }
             } else {
                 dir ("win_server") {
-                    if (params.BUTTON=='mysql') {
+                    if (params.BUTTON=='Mysql') {
                         // playbook to install mysql 
                         sh "ansible-playbook -i ../hosts install_mysql.yml"
                     }
