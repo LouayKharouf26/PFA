@@ -80,6 +80,21 @@ resource "azurerm_network_security_rule" "nsr-4" {
   network_security_group_name = azurerm_network_security_group.network-security-group.name
 }
 
+resource "azurerm_network_security_rule" "nsr-5" {
+  name                        = "WinRM"
+  priority                    = 500
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "*"
+  source_port_range           = "*"
+  destination_port_range      = "5986"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
+  resource_group_name         = azurerm_resource_group.resource-group.name
+  network_security_group_name = azurerm_network_security_group.network-security-group.name
+}
+
+#network configuration 
 resource "azurerm_virtual_network" "virtual-network" {
   name                = "${var.virtual_machine_name}-virtual-network"
   location            = var.resource_group_location
@@ -98,7 +113,7 @@ resource "azurerm_subnet_network_security_group_association" "name" {
   subnet_id                 = azurerm_subnet.subnet.id
   network_security_group_id = azurerm_network_security_group.network-security-group.id
 }
-
+#nic
 resource "azurerm_public_ip" "public_ip" {
   name                = "${var.virtual_machine_name}-public-ip"
   resource_group_name = azurerm_resource_group.resource-group.name
@@ -110,6 +125,7 @@ resource "azurerm_public_ip" "public_ip" {
   }
 }
 
+#nic
 resource "azurerm_network_interface" "network-interface" {
   name                = "${var.virtual_machine_name}-nic"
   location            = var.resource_group_location
@@ -122,11 +138,13 @@ resource "azurerm_network_interface" "network-interface" {
   }
 }
 
+#random integer for storage account
 resource "random_integer" "priority" {
   min = 1
   max = 50000
 }
 
+# storage account and container to store the script
 resource "azurerm_storage_account" "pfastorage" {
   name                     = "${random_integer.priority.result}pfastorage"
   resource_group_name      = azurerm_resource_group.resource-group.name
@@ -134,6 +152,7 @@ resource "azurerm_storage_account" "pfastorage" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 }
+
 resource "azurerm_storage_container" "scriptscontainer" {
   name                  = "scripts"
   storage_account_name  = azurerm_storage_account.pfastorage.name
@@ -150,6 +169,7 @@ resource "azurerm_storage_blob" "blob" {
   source                 = local.file_path
 }
 
+# virtual machine configuration
 resource "azurerm_windows_virtual_machine" "windows-virtual-machine" {
   name                = var.virtual_machine_name
   resource_group_name = azurerm_resource_group.resource-group.name
@@ -162,8 +182,6 @@ resource "azurerm_windows_virtual_machine" "windows-virtual-machine" {
   network_interface_ids = [
     azurerm_network_interface.network-interface.id,
   ]
-
-
 
   os_disk {
     name                 = var.virtual_machine_os_disk_name                 #"myOsDisk"
@@ -178,6 +196,8 @@ resource "azurerm_windows_virtual_machine" "windows-virtual-machine" {
     version   = "latest"
   }
 }
+
+# extension to install python and openssh
 resource "azurerm_virtual_machine_extension" "install-python-openssh" {
   name                 = "CustomScriptExtension"
   virtual_machine_id   = azurerm_windows_virtual_machine.windows-virtual-machine.id
@@ -200,3 +220,67 @@ SETTINGS
   }
 }
 
+# monitoring 
+
+// workspace 
+resource "azurerm_log_analytics_workspace" "example" {
+  name                = "${var.virtual_machine_name}-log-analytics-workspace"
+  location            = var.resource_group_location
+  resource_group_name = azurerm_resource_group.resource-group.name
+  sku                 = "PerGB2018" #Free #Standard
+  retention_in_days   = 30
+}
+
+#extension install on remote machine to gather metrics AzureMonitorLinuxAgent
+resource "azurerm_virtual_machine_extension" "example" {
+  name                       = "${var.virtual_machine_name}-ama"
+  virtual_machine_id         = azurerm_linux_virtual_machine.linux-virtual-machine.id
+  publisher                  = "Microsoft.Azure.Monitor"
+  type                       = "AzureMonitorLinuxAgent"
+  type_handler_version       = "1.0"
+  auto_upgrade_minor_version = "true"
+  depends_on                 = [azurerm_linux_virtual_machine.linux-virtual-machine, azurerm_log_analytics_workspace.example]
+}
+
+
+#data collection rule to extract data and send it to azure workspace analytics
+resource "azurerm_monitor_data_collection_rule" "example" {
+  name                = "${var.virtual_machine_name}-data-collection-rule"
+  location            = var.resource_group_location
+  resource_group_name = azurerm_resource_group.resource-group.name
+  depends_on          = [azurerm_virtual_machine_extension.example]
+  # where to store the data
+  destinations {
+    log_analytics {
+      workspace_resource_id = azurerm_log_analytics_workspace.example.id
+      name                  = "${var.virtual_machine_name}-test-destination-log"
+    }
+    azure_monitor_metrics {
+      name = "${var.virtual_machine_name}-test-destination-metrics"
+    }
+  }
+
+  #how to collect the data 
+  data_flow {
+    streams      = ["Microsoft-InsightsMetrics"]
+    destinations = ["${var.virtual_machine_name}-test-destination-log"]
+  }
+
+  # where to get the data
+  data_sources {
+    performance_counter {
+      streams                       = ["Microsoft-InsightsMetrics"]
+      sampling_frequency_in_seconds = 60
+      counter_specifiers            = ["\\VmInsights\\DetailedMetrics"]
+      name                          = "${var.virtual_machine_name}-VMInsightsPerfCounters"
+    }
+  }
+}
+
+# data collection rule association
+
+resource "azurerm_monitor_data_collection_rule_association" "example" {
+  name                    = "${var.virtual_machine_name}-data-collection-rule-association"
+  target_resource_id      = azurerm_linux_virtual_machine.linux-virtual-machine.id
+  data_collection_rule_id = azurerm_monitor_data_collection_rule.example.id
+}

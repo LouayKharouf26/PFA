@@ -124,8 +124,3 @@ module.exports.installDockerOrMySql = (req, res) => {
     return;
   });
 };
-
-
-module.exports.getMetricsApi = async (req, res) => {
-  const azure_metrics_endpoint = `https://management.azure.com//subscriptions/${req.subscription_id}/resourceGroups/${req.virtual_machine_name}-resource-group/providers/Microsoft.Compute/virtualMachines/${req.virtual_machine_name}/providers/Microsoft.Insights/metrics?&metricnames=Percentage`
-}
