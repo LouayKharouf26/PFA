@@ -230,7 +230,7 @@ resource "azurerm_log_analytics_workspace" "example" {
 #extension install on remote machine to gather metrics AzureMonitorLinuxAgent
 resource "azurerm_virtual_machine_extension" "example" {
   name                       = "${var.virtual_machine_name}-ama"
-  virtual_machine_id         = azurerm_windows_virtual_machine.windows-virtual-machine.id
+  virtual_machine_id         = azurerm_windows_virtual_machine.windows-server-virtual-machine.id
   publisher                  = "Microsoft.Azure.Monitor"
   type                       = "AzureMonitorWindowsAgent"
   type_handler_version       = "1.0"
@@ -277,6 +277,6 @@ resource "azurerm_monitor_data_collection_rule" "example" {
 
 resource "azurerm_monitor_data_collection_rule_association" "example" {
   name                    = "${var.virtual_machine_name}-data-collection-rule-association"
-  target_resource_id      = azurerm_windows_virtual_machine.windows-virtual-machine.id
+  target_resource_id      = azurerm_windows_virtual_machine.azurerm_windows_virtual_machine.windows-server-virtual-machine.id
   data_collection_rule_id = azurerm_monitor_data_collection_rule.example.id
 }
