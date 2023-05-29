@@ -7,4 +7,5 @@ router.post("/signup", controller.createUser);
 router.post("/login", controller.loginUser);
 router.get("/user", controller.getUserByUsername);
 router.post("/triggerPipeline", controller.triggerPipeline);
+router.get("/pipelinestatusansible", controller.getPipelineStatusAnsible);
 module.exports = router;
