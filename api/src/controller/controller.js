@@ -124,3 +124,35 @@ module.exports.installDockerOrMySql = (req, res) => {
     return;
   });
 };
+module.exports.getPipelineStatusAnsible = async (req,res) => {
+  const jenkinsUrl = 'http://localhost:5000'; // replace with your Jenkins URL
+const jobName = 'PFAPIPELINE'; // replace with the name of your Jenkins pipeline job
+const headers = new Headers({
+  Authorization: 'Basic ' + btoa("louaykharouf:1176ee61d0ecdd02a6a70d57c1b0268177"),
+});
+  try {
+    const jobInfoResponse = await fetch("http://localhost:5000/job/PFAAnsible/api/json", { headers });
+    const jobInfo = await jobInfoResponse.json();
+    const lastBuildNumber = jobInfo.lastBuild.number;
+    const buildStatusResponse = await fetch(`${jenkinsUrl}/job/${jobName}/${lastBuildNumber}/api/json`, { headers });
+    const buildStatus = await buildStatusResponse.json();
+    console.log(lastBuildNumber)
+    console.log(buildStatus.result)
+    if (buildStatus.building) {
+      //return { status: 'running' };
+      res.send({ status: 'running' });
+    } else if (buildStatus.result === 'SUCCESS') {
+      //return { status: 'success' };
+      res.send({ status: 'success' });
+    } else {
+      //return { status: 'failure' };
+      res.send({ status: 'failure' });
+    }
+
+  } catch (err) {
+    console.error(err);
+    //return { error: 'Failed to get pipeline status' };
+    res.send({ error: 'Failed to get pipeline status'});
+  }
+ 
+};
