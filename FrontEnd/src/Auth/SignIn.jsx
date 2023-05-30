@@ -37,7 +37,8 @@ function SignIn(){
         })
           
     }
-    return(<div className="SignIn" id="intro">
+    return(<>
+    <div className="SignIn" id="intro">
     <p class="sign">Sign in to  <br/> 
 <span class="account">Your Account</span>
 </p>
@@ -57,10 +58,12 @@ function SignIn(){
 
 <button onClick={log} type="submit" class="btn btn-primary log" id="signbtn">Login</button>
 </div>
-<img src={logo} className='logo-img'></img>
+
      
 
 </div>
+<img src={logo} className='logo-img1'></img>
+</>
 );
 }
 export default SignIn ;

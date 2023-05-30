@@ -17,7 +17,7 @@ import VMdetails from './Dashboard/VMdetails.jsx';
 import Monitoring from './Monitoring/Monitoring.jsx';
 import AnsiblePipelineStatus from './AnsiblePipelineStatus.jsx';
 //import TerminalSSH from './SSH/TerminalSSH.jsx';
-
+const loggedIn = localStorage.getItem('id') !== null;
 
 const router = createBrowserRouter([
   {
@@ -30,7 +30,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/CreateVM",
-    element: <CreateVm />,
+    element: loggedIn ? <CreateVm />:<SignIn></SignIn>,
     
   },
   {
@@ -39,23 +39,23 @@ const router = createBrowserRouter([
   },
   {
     path: "Dashboard",
-    element: <Dashboard />
+    element: loggedIn ? <Dashboard /> :<SignIn></SignIn>
   },
   {
     path: "PipelineStatus",
-    element: <PipelineStatus />
+    element:loggedIn ? <PipelineStatus /> :<SignIn></SignIn>
   },
   {
     path: "/vms/:vmName",
-    element: <VMdetails />
+    element:loggedIn? <VMdetails />:<SignIn></SignIn>
   },
   {
     path: "Monitoring",
-    element: <Monitoring />
+    element: loggedIn? <Monitoring />:<SignIn></SignIn>
   },
   {
     path: "AnsiblePipeline",
-    element: <AnsiblePipelineStatus />
+    element: loggedIn?<AnsiblePipelineStatus />:<SignIn></SignIn>
   },
   /*{
     path: "SSH",

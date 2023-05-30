@@ -404,10 +404,12 @@ line-height: 20px;
 
 color: #000000;
 }
-.logo-img{
+.logo-img1{
 position: absolute;
 right: 1%;
 top: 15%;
+width: 250px;
+height: 250px;
 
 }
 #label1{
