@@ -62,7 +62,7 @@ module.exports.loginUser = async (req, res) => {
       console.log(JSON.stringify({ id: user._id.valueOf() }));
       res
         .status(200)
-        .send(JSON.stringify({ id: user._id.valueOf(), name: user.firstname }));
+        .send(JSON.stringify({ id: user._id.valueOf(), name: user.firstname ,email: user.email, subscription_id: user.subscription_id}));
     }
   } else {
     res.status(400);
@@ -84,6 +84,7 @@ module.exports.getUserByUsername = async (req, res) => {
 module.exports.triggerPipeline = async (req, res) => {
   const jenkins_url = `http://localhost:5000/job/PFAPIPELINE/buildWithParameters?&OSIMAGE=${req.body.parameter}`;
   const params = req.body;
+  console.log(params);
   var name =
     __dirname + "\\..\\..\\..\\terraform-template\\terraform.tfvars.json";
   var m = JSON.parse(fs.readFileSync(name).toString());
@@ -97,7 +98,7 @@ module.exports.triggerPipeline = async (req, res) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Basic " + btoa("mk:116a4a96ddedae25b84ee05251982b2ffe"),
+      Authorization: "Basic " + btoa("louaykharouf:1176ee61d0ecdd02a6a70d57c1b0268177"),
     },
   };
   request(clientServerOptions, function (error, response) {
@@ -108,21 +109,56 @@ module.exports.triggerPipeline = async (req, res) => {
 };
 
 module.exports.installDockerOrMySql = (req, res) => {
-  const jenkins_url = `http://localhost:5000/job/pfa-pipeline-ansible/buildWithParameters?&BUTTON=${req.body.button}&OSIMAGE=${req.body.parameter}`;
+  const jenkins_url = `http://localhost:5000/job/PFAAnsible/buildWithParameters?&OSIMAGE=${req.body.parameter}&BUTTON=${req.body.button}`;
   const params = req.body;
+  console.log(params);
   var clientServerOptions = {
     uri: jenkins_url,
     body: "",
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Basic " + btoa("mk:116a4a96ddedae25b84ee05251982b2ffe"),
+      Authorization: "Basic " + btoa("louaykharouf:1176ee61d0ecdd02a6a70d57c1b0268177"),
     },
   };
   request(clientServerOptions, function (error, response) {
-    console.log(error, response.body);
+    console.log(error, response);
     return;
   });
+};
+
+
+module.exports.getPipelineStatus = async (req,res) => {
+  const jenkinsUrl = 'http://localhost:5000'; // replace with your Jenkins URL
+const jobName = 'PFAPIPELINE'; // replace with the name of your Jenkins pipeline job
+const headers = new Headers({
+  Authorization: 'Basic ' + btoa("louaykharouf:1176ee61d0ecdd02a6a70d57c1b0268177"),
+});
+  try {
+    const jobInfoResponse = await fetch("http://localhost:5000/job/PFAPIPELINE/api/json", { headers });
+    const jobInfo = await jobInfoResponse.json();
+    const lastBuildNumber = jobInfo.lastBuild.number;
+    const buildStatusResponse = await fetch(`${jenkinsUrl}/job/${jobName}/${lastBuildNumber}/api/json`, { headers });
+    const buildStatus = await buildStatusResponse.json();
+    console.log(lastBuildNumber)
+    console.log(buildStatus.result)
+    if (buildStatus.building) {
+      //return { status: 'running' };
+      res.send({ status: 'running' });
+    } else if (buildStatus.result === 'SUCCESS') {
+      //return { status: 'success' };
+      res.send({ status: 'success' });
+    } else {
+      //return { status: 'failure' };
+      res.send({ status: 'failure' });
+    }
+
+  } catch (err) {
+    console.error(err);
+    //return { error: 'Failed to get pipeline status' };
+    res.send({ error: 'Failed to get pipeline status'});
+  }
+ 
 };
 module.exports.getPipelineStatusAnsible = async (req,res) => {
   const jenkinsUrl = 'http://localhost:5000'; // replace with your Jenkins URL
@@ -156,3 +192,12 @@ const headers = new Headers({
   }
  
 };
+
+// {
+//   "subscription_id": "cc7b3e92-7412-47e3-abe0-b6f5315d0d09",
+//   "resource_group_name": "rg-01",
+//   "virtual_network_name": "vnet-01",
+//   "subnet_name": "subnet-01",
+//   "virtual_machine_name": "linux-01",
+//   "virtual_machine_size": "Standard_B2s"
+// }
