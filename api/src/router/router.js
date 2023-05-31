@@ -8,4 +8,5 @@ router.post("/login", controller.loginUser);
 router.get("/user", controller.getUserByUsername);
 router.post("/triggerPipeline", controller.triggerPipeline);
 router.get("/pipelinestatusansible", controller.getPipelineStatusAnsible);
+router.post("/ansiblepipeline", controller.installDockerOrMySql);
 module.exports = router;
