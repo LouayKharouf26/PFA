@@ -34,7 +34,7 @@ pipeline{
                                 // badel esm el pipeline houni 
                                 //sh "terraform apply --auto-approve --var-file='..\\..\\..\\..\\C:\\Users\\mk\\Desktop\\PFA\\terraform-template\\terraform.tfvars.json'"
                                 //sh "../../../../"
-                                sh "terraform apply --auto-approve --var-file='C: \\Users/mk/Desktop/PFA/terraform-template/terraform.tfvars.json'"
+                                sh "terraform apply --auto-approve --var-file='C:\\Users/mk/Desktop/PFA/terraform-template/terraform.tfvars.json'"
                             }
                         } else if (params.OSIMAGE == 'windows'){
                             dir ("terraform-template/windows") {
