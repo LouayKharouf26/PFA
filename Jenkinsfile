@@ -42,7 +42,7 @@ pipeline{
                                 sh "ls"
                                 echo "terraform init"
                                 sh "terraform init -upgrade"
-                                sh "terraform apply --auto-approve --var-file=/home/mk/PFA/terraform-template/terraform.tfvars.json"
+                                sh "terraform apply --auto-approve --var-file='C:\\Users/mk/Desktop/PFA/terraform-template/terraform.tfvars.json'"
                                 //sh "terraform apply --auto-approve --var-file=../terraform.tfvars.json"
                             }
                         } else {
@@ -51,7 +51,7 @@ pipeline{
                                 sh "ls"
                                 echo "terraform init"
                                 sh "terraform init -upgrade"
-                                sh "terraform apply --auto-approve --var-file=/home/mk/PFA/terraform-template/terraform.tfvars.json"
+                                sh "terraform apply --auto-approve --var-file='C:\\Users/mk/Desktop/PFA/terraform-template/terraform.tfvars.json'"
                                 //sh "terraform apply --auto-approve --var-file=../terraform.tfvars.json"
                             }                    
                         }
