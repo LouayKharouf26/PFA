@@ -30,11 +30,11 @@ pipeline{
                                 sh "ls"
                                 echo "terraform init"
                                 sh "terraform init -upgrade"
-                                //sh "terraform apply --auto-approve --var-file=/var/jenkins_home/workspace/test/terraform-template/terraform.tfvars.json"
+                                sh "terraform apply --auto-approve --var-file=/var/jenkins_home/workspace/PFAPIPELINE/terraform-template/terraform.tfvars.json"
                                 // badel esm el pipeline houni 
                                 //sh "terraform apply --auto-approve --var-file='..\\..\\..\\..\\C:\\Users\\mk\\Desktop\\PFA\\terraform-template\\terraform.tfvars.json'"
                                 //sh "../../../../"
-                                sh "terraform apply --auto-approve --var-file='C:\\Users/mk/Desktop/PFA/terraform-template/terraform.tfvars.json'"
+                               // sh "terraform apply --auto-approve --var-file='C:\\Users/mk/Desktop/PFA/terraform-template/terraform.tfvars.json'"
                             }
                         } else if (params.OSIMAGE == 'windows'){
                             dir ("terraform-template/windows") {
@@ -42,8 +42,10 @@ pipeline{
                                 sh "ls"
                                 echo "terraform init"
                                 sh "terraform init -upgrade"
-                                sh "terraform apply --auto-approve --var-file='C:\\Users/mk/Desktop/PFA/terraform-template/terraform.tfvars.json'"
+                                //sh "terraform apply --auto-approve --var-file='C:\\Users/mk/Desktop/PFA/terraform-template/terraform.tfvars.json'"
                                 //sh "terraform apply --auto-approve --var-file=../terraform.tfvars.json"
+                                sh "terraform apply --auto-approve --var-file=/var/jenkins_home/workspace/PFAPIPELINE/terraform-template/terraform.tfvars.json"
+
                             }
                         } else {
                             dir ("terraform-template/windows_server") {
@@ -51,7 +53,9 @@ pipeline{
                                 sh "ls"
                                 echo "terraform init"
                                 sh "terraform init -upgrade"
-                                sh "terraform apply --auto-approve --var-file='C:\\Users/mk/Desktop/PFA/terraform-template/terraform.tfvars.json'"
+                                sh "terraform apply --auto-approve --var-file=/var/jenkins_home/workspace/PFAPIPELINE/terraform-template/terraform.tfvars.json"
+
+                               // sh "terraform apply --auto-approve --var-file='C:\\Users/mk/Desktop/PFA/terraform-template/terraform.tfvars.json'"
                                 //sh "terraform apply --auto-approve --var-file=../terraform.tfvars.json"
                             }                    
                         }
