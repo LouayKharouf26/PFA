@@ -24,7 +24,7 @@ pipeline{
                     echo "======== executing ========"
                         sh "pwd"
                         sh "ls"
-                        sh"docker ps"
+                        sh"sudo docker ps"
                         if (params.OSIMAGE== 'linux') {
                             dir ("terraform-template/linux") {
                                 sh "pwd"
