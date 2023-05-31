@@ -18,7 +18,8 @@ pipeline{
             echo "Update hosts "
             dir("ansible"){
             //sh "ansible-playbook update-hosts.yml --extra-vars='@C:\\Users/mk/Desktop/PFA/terraform-template/terraform.tfvars.json'"
-            sh "docker exec source_container sh -c 'cd E:\\PFA/pfaback/PFA/PFA/terraform-template/terraform.tfvars.json && tar -cf - terraform.tfvars.json' | docker recursing_robinson sh -c 'cd /var/jenkins_home/workspace/PFAAnsible/terraform-template && tar -xf -'"
+            //sh "docker exec source_container sh -c 'cd E:\\PFA/pfaback/PFA/PFA/terraform-template/terraform.tfvars.json && tar -cf - terraform.tfvars.json' | docker recursing_robinson sh -c 'cd /var/jenkins_home/workspace/PFAAnsible/terraform-template && tar -xf -'"
+            sh "docker cp E:\\PFA/pfaback/PFA/PFA/terraform-template/terraform.tfvars.json recursing_robinson:/var/jenkins_home/workspace/PFAAnsible/terraform-template
             //sh "ansible-playbook update-hosts.yml --extra-vars='@E:\\PFA/pfaback/PFA/PFA/terraform-template/terraform.tfvars.json'"
             //sh "ansible-playbook -i hosts ping.yaml"}
             if (params.OSIMAGE== 'Linux') {
