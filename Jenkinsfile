@@ -8,8 +8,7 @@ pipeline{
             steps {
                 git url: 'https://github.com/Louaykharouf26/PFA', branch: 'malek',
                 credentialsId: 'github-credentials' //jenkins-github-creds
-                //sh "ls -ltr"
-                bat "ls -ltr"
+                sh "ls -ltr"
             }
         }
 
@@ -23,8 +22,7 @@ pipeline{
             steps {                
                 script {
                     echo "======== executing ========"
-                        //sh "pwd"
-                        bat "pwd"
+                        sh "pwd"
                         sh "ls"
                         sh"sudo docker ps"
                         if (params.OSIMAGE== 'linux') {
