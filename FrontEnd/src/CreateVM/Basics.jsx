@@ -101,7 +101,7 @@ const Basics = ({ handleChange }) => {
           )}
           {osType === 'windows' && (
             <>
-              <option value='windows10'>Windows 10</option>
+              <option value='win10-21h2-pro'>Windows 10</option>
               
             </>
           )}

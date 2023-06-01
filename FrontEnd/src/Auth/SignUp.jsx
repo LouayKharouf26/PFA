@@ -15,6 +15,8 @@ function Signup(){
             method: "POST",
            withCredentials: true,
             headers: { "Content-Type": "application/json",
+                       "Access-Control-Allow-Origin":" http://localhost:5173/",
+                       "Access-Control-Allow-Credentials": "true"
                        },
             body: JSON.stringify({
                 username: usernameRef.current.value,
@@ -61,7 +63,7 @@ function Signup(){
    
     <button onClick={Sign} type="submit" className="btn btn-primary log" id="signupbtn">Sign Up</button>
      </div>
-     <img src={logo} className='logo-img'></img>
+     <img src={logo} className='logo-img1'></img>
     </div>);
     }
     export default Signup ;
