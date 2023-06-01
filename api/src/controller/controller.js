@@ -4,8 +4,11 @@ const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const md5 = require("md5");
 const fs = require("fs");
+//const fetch = require("node-fetch");
 const request = require("request");
-
+const path = require('path');
+const { exec } = require('child_process');
+const { Octokit } = require('@octokit/rest');
 module.exports.getDefault = (req, res) => {
   console.log("hello for get request");
   res.send("hello for test request");
@@ -26,13 +29,13 @@ module.exports.createUser = async (req, res) => {
           subscription_id,
         })
           .then((response) => {
-            res.send("User added successfully to database");
+            res.json("User added successfully to database");
             res.status(200);
           })
           .catch((err) => console.log(err));
       } else {
         res.status(400);
-        res.send("User is already in the database");
+        res.json("User is already in the database");
       }
     })
     .catch((err) => console.log(err));
@@ -92,6 +95,12 @@ module.exports.triggerPipeline = async (req, res) => {
     m[p[0]] = p[1];
   });
   fs.writeFileSync(name, JSON.stringify(m));
+  //E:\PFA\backpfa\PFA\PFA\terraform-template\terraform.tfvars.json
+  exec("docker cp ../terraform-template/terraform.tfvars.json jenkins:/var/jenkins_home/workspace/PFAPIPELINE/terraform-template", (error, stdout, stderr) => {
+    console.log(stdout,stderr,error)
+    console.log("success");
+  });
+   
   var clientServerOptions = {
     uri: jenkins_url,
     body: "",
@@ -193,6 +202,8 @@ const headers = new Headers({
  
 };
 
+
+
 // {
 //   "subscription_id": "cc7b3e92-7412-47e3-abe0-b6f5315d0d09",
 //   "resource_group_name": "rg-01",
@@ -201,3 +212,4 @@ const headers = new Headers({
 //   "virtual_machine_name": "linux-01",
 //   "virtual_machine_size": "Standard_B2s"
 // }
+
