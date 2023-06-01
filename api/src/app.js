@@ -10,7 +10,9 @@ app.use(helmet());
 app.use(express.json());
 app.use(
   cors({
-    origin: ["frontend_ip:port"],
+    origin: ['http://localhost:5173'],
+    credentials: true,            //access-control-allow-credentials:true
+    optionSuccessStatus: 200,
   })
 );
 app.use(router);
